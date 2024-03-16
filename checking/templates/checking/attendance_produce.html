@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+ <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hello! POKO</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">        
+        <style>
+            body {
+                
+              }
+            table {
+            }
+            table, th, td {
+            }
+            form {margin-bottom: 10px}
+            form input { width: 30%; }
+
+        .resized-image {
+            width: 400px;
+            height: 300px;
+            margin:  auto; /* 수평 가운데 정렬을 위해 margin을 활용 */
+            display: block; /* 블록 요소로 설정하여 margin 속성이 적용되도록 함 */
+        }
+        </style>
+ </head>
+ <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">Koinonia Church</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/index">POKO</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+        <img src="{{ poko_image }}" alt="POKO" width="" height="300" class="resized-image"> <!-- POKO 이미지 삽입-->
+    <div class="regibox" align="center">
+        출석부를 생성할 날짜를 선택하고 선생님의 이름을 입력해 주세요.
+        <br><br>
+        <form method="POST" action="/date/">
+                {% csrf_token %}
+            <input type="date" id="date" name="date"><!-- 날짜 데이터 전송 -->
+            <br><br>
+            <input type="text" name="q" placeholder="선생님" autofocus><!-- 선생님 데이터 전송 -->
+            <br><br>
+            <button type="submit" value="submit">출석부 생성</button>
+        </form>
+    </div>
+
+</body>
+
+<script>
+    // JavaScript를 사용하여 현재 날짜를 가져오기
+    const currentDate = new Date();
+
+    // 날짜를 "YYYY-MM-DD" 형식의 문자열로 변환
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // input 요소의 value 속성에 현재 날짜를 설정
+    document.getElementById('date').value = formattedDate;
+</script>
+
+<!--
+    <div class="regibox" align="center">
+    <form method="POST" action="date">
+        {% csrf_token %}
+        <input type="date" id="date" name="date" value="2024-01-01" min="2024-01-01" max="2024-12-31">
+        <br><br>
+        <button type="submit" value="submit">출석부 생성</button>
+    </form>
+</div>
+-->

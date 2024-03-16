@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>POKO-출석현황</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .quote-box {
+            max-width: 380px;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            margin: 10px auto;
+        }
+
+        .quote-box h4 {
+            color: #1E90FF;
+        }
+
+        .quote-box p {
+            color: #555;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .tab-button {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f2f2f2;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .tab-button-container {
+            text-align: center;
+            margin-bottom: 20px; /* 탭 아래 여백 추가 */
+        }
+
+        .table-container {
+            text-align: center;
+            max-width: 50%;
+            margin: 0 auto; /* 테이블 중앙 정렬 */
+        }
+
+        .table-responsive {
+            overflow-x: auto; /* 테이블이 화면을 넘어가는 경우 가로 스크롤을 허용 */
+        }
+
+        .table {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quote-box">
+        <h4>알림</h4>
+        <p> {{ count_text1 }} 
+            <br><br>
+            {{ count_text2 }} {{ count_text5 }}
+            <br><br>
+            {{ count_text3 }}
+        </p>
+    </div>
+    <div class="regibox" align="center">
+            {{ graph|safe}}
+            {{ count_graph|safe }}
+            <form method="POST" action="/attendance_detail/">
+                {% csrf_token %}
+                <input type="date" id="date" name="date">
+                <br><br>
+                <p>주간으로 출결을 확인할 날짜를 선택합니다.</p>
+                <button type="submit" value="submit">출석부 조회</button>
+                <br><br>
+            </form>
+        </div>
+
+    <!-- 모든 탭에 대한 구분이 없고, 모든 탭이 tab1과 같은 ID를 가지고 있습니다. 이는 HTML 문서에서 고유한 ID를 가져야 하는 규칙을 위반하며, JavaScript에서 각 탭을 구분하기 어렵게 만듭니다. -->
+    <div id="tabs" class="tab-button-container">
+    {% for teacher in tabel_teacher %}
+        <div class="tab-button" onclick="showTab('{{ teacher.teacher_name }}')">
+            {{ teacher.teacher_name }}
+        </div>
+    {% endfor %}
+    </div>
+
+    {% for teacher in tabel_teacher %}
+    <div id="{{ teacher.teacher_name }}" class="tab-content {% if forloop.first %}active{% endif %}">
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table">
+                    <h3>{{ teacher.teacher_name }} 선생님</h3>
+                    <p>{{ date }} 출결 입니다.</p>
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>출결</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in table_student %}
+                            {% if teacher.teacher_name == student.teacher_name %}
+                                <tr>
+                                    <td>{{ student.name }}</td>
+                                    <td>{{ student.attendance }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+    <!-- container 부분을 위로 이동 -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <!-- 출석부 카테고리 -->
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">양육사역 도우미 POKO</h5>
+                        <p class="card-text">전체기간 반별, 개인별 출결 조회를 할 수 있습니다.</p>
+                        <a href="/attendance_group/" class="btn btn-primary">전체기간 반별, 개인별 조회</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    // JavaScript를 사용하여 현재 날짜를 가져오기
+    const currentDate = new Date();
+
+    // 날짜를 "YYYY-MM-DD" 형식의 문자열로 변환
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // input 요소의 value 속성에 현재 날짜를 설정
+    document.getElementById('date').value = formattedDate;
+</script>
+
+   <!-- tab을 위한 script -->
+<script>
+    function showTab(tabId) {
+        // Hide all tabs
+        var tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        // Show the selected tab
+        var selectedTab = document.getElementById(tabId);
+        selectedTab.classList.add('active');
+    }
+</script>
+
+</html>

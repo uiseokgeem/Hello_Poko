@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>개인별 조회</title>
+       <style>
+        body {
+            background-color: #ffffff; /* 배경색 조절 */
+            padding: 20px;
+        }
+        .instagram-table {
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: center;
+        }
+        .tab-content {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+        .quote-box {
+            max-width: 450px;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            margin: 10px auto;
+        }
+
+        .quote-box h4 {
+            color: #1E90FF;
+        }
+
+        .quote-box p {
+            color: #555;
+        }
+
+        .tab-button {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f2f2f2;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .tab-button-container {
+            text-align: center;
+            margin-bottom: 20px; /* 탭 아래 여백 추가 */
+        }
+
+        .table-container {
+            text-align: center;
+            max-width: 50%;
+            margin: 0 auto; /* 테이블 중앙 정렬 */
+        }
+
+        .table-responsive {
+            overflow-x: auto; /* 테이블이 화면을 넘어가는 경우 가로 스크롤을 허용 */
+        }
+
+        .table {
+            width: 100%;
+        }
+        
+         .tab-content {
+        overflow-y: auto;
+        max-height: 300px; /* 원하는 높이로 설정 */
+    }
+    </style>
+</head>
+<body>
+<div class="quote-box">
+    <h4>알림</h4>
+    <p>
+    <h5 class="text-center">{{ query }} 선생님 반</h5>
+        전체기간 학생별 출결 퍼센티지와 날짜별 출결 확인이 가능합니다.
+    </p>
+</div>
+    <div class="container">
+        <div class="instagram-table text-center">
+            {{ graph|safe }}
+        </div>
+        <br><br>
+    
+    
+        <div id="tabs" class="tab-button-container">
+    {% for student in table_student %}
+        <div class="tab-button" onclick="showTab('{{ student.name }}')">
+            {{ student.name }}
+        </div>
+    {% endfor %}
+    </div>
+        {% for student in table_student %}
+            <div id="{{ student.name }}" class="tab-content {% if forloop.first %}active{% endif %}">
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <h3>{{ student.name }} 학생</h3>
+                            <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>출결</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for data in table_data %}
+                                {% if student.name == data.name %}
+                                    <tr>
+                                        <td>{{ data.date }}</td>
+                                        <td>{{ data.attendance }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    
+        <br><br>   
+        <div class="container">
+            <h4 class="text-center">{{ query }} 선생님 반 전체 기간 출결 다운로드</h4>
+            <div class="instagram-table text-center">
+                <a href="{% url 'download_excel' %}" download="my_data.xlsx">Excel 파일 다운로드</a>
+            </div>
+        </div>
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+    </div>
+</body>
+
+<!-- tab을 위한 script -->
+<script>
+    function showTab(tabId) {
+        // Hide all tabs
+        var tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(function (tab) {
+            tab.classList.remove('active');
+        });
+
+        // Show the selected tab
+        var selectedTab = document.getElementById(tabId);
+        selectedTab.classList.add('active');
+    }
+</script>
+</html>
