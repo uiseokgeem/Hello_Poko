@@ -368,10 +368,10 @@ def attendance_group(request):  # 전체기간 반별 출결률 조회
     )  # 전체 출결횟수 = attendance 횟수 총합 + absent  횟수 총합
     # print(attendance_sum)
 
-    # 전체 출결일수에서 attendance 횟수와 absent 횟수의 비율을 계산 및 attendance_ratio, absent_ratio 컬럼 추가
+    # 전체 출결일수에서 attendance 횟수와 absent 횟수의 비율을 계산 후 attendance_ratio, absent_ratio 컬럼 추가
     attendance_sum["attendance_ratio"] = (
         attendance_sum["attendance"] / attendance_sum["total"]
-    )
+    )  # 에러 발생 새로운 col '조계원' col에 대한 데이터가 없어 연산을 실행하지 못함 -> 해당 데이터가 없어도 연산이 실행 되게끔 해야함.
     attendance_sum["absent_ratio"] = attendance_sum["absent"] / attendance_sum["total"]
 
     attendance_grouped = (

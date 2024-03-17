@@ -26,25 +26,55 @@
             flex-direction: row;
             gap: 10px;
         }
+
+        table {
+            border-collapse: collapse;
+            width: 35%; /* 테이블의 전체 너비 설정 */
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 7px;
+        }
+
+        td form input[type="radio"] {
+            margin-right: 5px; /* 출석과 결석 라디오 버튼 사이의 간격 조절 */
+        }
+
+        td form label {
+            display: inline-block;
+            margin-right: 50px; /* 라디오 버튼과 텍스트 사이의 간격 조절 */
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
         </style>
 </head>
 <body>
 <div class="regibox" align="center">
     <h4>짜잔! {{ date }} 출석부 입니다.</h4>
     <br class="regi-page" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-        {% for names in names %}
-            <form method="POST" action="/check/">
-                <strong>{{ names.name }}:</strong>
-                {% csrf_token %}
-                <input type="hidden" id="date" name="date" value={{ date }}>
-                <input type="hidden" id="name" name="name" value={{ names.name }}>
-                <input type="radio" name="attendance" value="출석">출석
-                <input type="radio" name="attendance" value="결석">결석
-                <br>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        {% endfor %}
+        <table>
+            {% for names in names %}
+                <tr>
+                    <td><strong>{{ names.name }}</strong></td>
+                    <td>
+                        <form method="POST" action="/check/">
+                            {% csrf_token %}
+                            <input type="hidden" id="date" name="date" value={{ date }}>
+                            <input type="hidden" id="name" name="name" value={{ names.name }}>
+                            <label><input type="radio" name="attendance" value="출석">출석</label>
+                            <label><input type="radio" name="attendance" value="결석">결석</label>
+                            <button type="submit" class="btn btn-primary">제출</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
         <br><br>
-        <a href="/index/" class="btn btn-primary">Completed</a>
+        <a href="/index/" class="btn btn-primary">Home</a>
     </div>
 </body>
+</html>>
