@@ -40,7 +40,7 @@ class Attendance(models.Model):  # 모델명의 첫글자는 대문자로
 
 class GetImage(models.Model):
     name = models.CharField(max_length=50)
-    image = models.ImageField(blank=True, upload_to="checking/getimage/%Y/%m/%d")
+    image = models.ImageField(blank=True)  # upload_to="checking/getimage/%Y/%m/%d"
     description = models.TextField()
 
     def __str__(self):

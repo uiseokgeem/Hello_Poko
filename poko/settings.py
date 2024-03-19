@@ -136,10 +136,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-MEDIA_URL = "media/"  # 웹에서 첨부 파일 접근 시 url로 사용.
+MEDIA_URL = "/media/"  # 웹에서 첨부 파일 접근 시 url로 사용.
 MEDIA_ROOT = BASE_DIR / "media"  # 첨부한 파일의 저장경로로 사용.
 
 # Default primary key field type
