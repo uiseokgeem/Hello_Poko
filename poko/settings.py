@@ -150,3 +150,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 INTERNAL_IPS = ["127.0.0.1"]
 
 AUTH_USER_MODEL = "auth.User"
+
+CSRF_TRUSTED_ORIGINS = ["https://www.hellopoko.com", "https://hellopoko.com"]
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
