@@ -40,7 +40,7 @@ def index_detail(request):
 
 
 def attendace_produce(request):
-    poko_image = GetImage.objects.get(pk=2).image.url
+    poko_image = GetImage.objects.get(pk=3).image.url
     return render(
         request, "checking/attendance_produce.html", context={"poko_image": poko_image}
     )
@@ -95,11 +95,12 @@ def chk(request):
 
     member_info.save()
     attendance.save()
+    poko_image_chk = GetImage.objects.get(pk=4).image.url
 
     return render(
         request,
         "checking/attendnace_check.html",
-        {"date": attendance.date, "names": names},
+        {"date": attendance.date, "names": names, "poko_image_chk": poko_image_chk},
     )
 
 
