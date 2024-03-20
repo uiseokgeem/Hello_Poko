@@ -30,7 +30,6 @@ DEBUG = int(os.environ.get("DEBUG", 1))
 
 if os.environ.get("DJANGO_ALLOWED_HOSTS"):
     ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split()
-
     print("ALLOWED_HOSTS environ 확인", ALLOWED_HOSTS)
 
 else:
