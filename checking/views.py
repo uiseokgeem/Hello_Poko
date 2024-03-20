@@ -95,12 +95,12 @@ def chk(request):
 
     member_info.save()
     attendance.save()
-    poko_image_chk = GetImage.objects.get(pk=4).image.url
+    # poko_image_chk = GetImage.objects.get(pk=4).image.url
 
     return render(
         request,
         "checking/attendnace_check.html",
-        {"date": attendance.date, "names": names, "poko_image_chk": poko_image_chk},
+        {"date": attendance.date, "names": names},
     )
 
 
