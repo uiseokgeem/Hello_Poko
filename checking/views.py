@@ -135,10 +135,11 @@ def attendance_detail(request):
 
         # 그래프 제목 및 축 레이블 설정
         plt.xticks(rotation="horizontal", fontproperties=fontprop)
+        plt.yticks(rotation="horizontal", fontproperties=fontprop)
         ax.set_ylabel("")
         ax.xaxis.set_major_locator(ticker.NullLocator())  # x축 눈금 비활성화
         ax.grid(False)
-        plt.legend(["결석", "출석"], loc="upper right", prop=fontprop)
+        plt.legend(["결석", "출석"], loc="lower right", prop=fontprop)
 
         # 그래프에 텍스트로 데이터 표기
         for index, value in enumerate(result["결석"]):
