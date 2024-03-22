@@ -35,6 +35,10 @@
             display: none;
         }
 
+        .active {
+            display: block;
+        }
+
         .tab-button {
             cursor: pointer;
             padding: 10px;
@@ -62,8 +66,6 @@
         .table {
             width: 100%;
         }
-        
-        
     </style>
 </head>
 <body>
@@ -79,10 +81,10 @@
     </div>
     
     <div class="container">
-        <div class="row">
-            {{ graph|safe }}
-            {{ count_graph|safe }}
-        </div>
+    <div class="row">
+        {{ graph|safe }}
+        {{ count_graph|safe }}
+    </div>
     </div>
     
     <div class="regibox" align="center">
