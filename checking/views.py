@@ -410,12 +410,13 @@ def attendance_group(request):  # 전체기간 반별 출결률 조회
     imgdata = StringIO()
     plt.savefig(imgdata, format="svg")
     imgdata.seek(0)
-    svg_bytes = imgdata.getvalue()  # svg 그래프 크기 조절을 위해 추가 됨
 
     # SVG 문자열을 가져와서 전달
-    # graph = imgdata.getvalue()
+    graph = imgdata.getvalue()
 
-    graph = f'<div style="width: 70%; margin: 0 auto;">{svg_bytes}</div>'
+    # svg_bytes = imgdata.getvalue()  # svg 그래프 크기 조절을 위해 추가 됨
+    # graph = f'<div style="width: 70%; margin: 0 auto;">{svg_bytes}</div>'
+    # svg 내부 스타일 적용은 웹에서 잘 이루어지나 모바일에서 정렬이 맞지 않음
 
     return render(
         request,
