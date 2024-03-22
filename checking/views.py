@@ -367,11 +367,11 @@ def attendance_group(request):  # 전체기간 반별 출결률 조회
         .reset_index()
     )
 
-    print(attendance_grouped)
-
     ## 폰트 설정
     path = "./static/AppleGothic.ttf"
     fontprop = fm.FontProperties(fname=path, size=11)
+
+    ## 폰트 속성 설정
     plt.rcParams["font.family"] = "AppleGothic"
     plt.rcParams["axes.unicode_minus"] = False
 
@@ -402,8 +402,7 @@ def attendance_group(request):  # 전체기간 반별 출결률 조회
     )
     plt.yticks([])  # y축 눈금 비활성화
     plt.xlabel("")
-    # plt.ylabel("출석/결석 비율")
-    # plt.title("전체 기간 반별 출석/결석 비율")
+
     # 범례 추가 및 설정
     plt.legend(["출석", "결석"], loc="upper right", prop=fontprop)
 
@@ -411,9 +410,12 @@ def attendance_group(request):  # 전체기간 반별 출결률 조회
     imgdata = StringIO()
     plt.savefig(imgdata, format="svg")
     imgdata.seek(0)
+    svg_bytes = imgdata.getvalue()  # svg 그래프 크기 조절을 위해 추가 됨
 
     # SVG 문자열을 가져와서 전달
-    graph = imgdata.getvalue()
+    # graph = imgdata.getvalue()
+
+    graph = f'<div style="width: 70%; margin: 0 auto;">{svg_bytes}</div>'
 
     return render(
         request,
