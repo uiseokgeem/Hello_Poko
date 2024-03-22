@@ -241,6 +241,8 @@ def attendance_detail(request):
 
         path = "./static/AppleGothic.ttf"
         fontprop = fm.FontProperties(fname=path, size=11)
+
+        # 폰트 속성 설정
         plt.rcParams["font.family"] = "AppleGothic"
         plt.rcParams["axes.unicode_minus"] = False
 
@@ -264,18 +266,11 @@ def attendance_detail(request):
                 textcoords="offset points",
                 xytext=(0, 10),
                 ha="center",
+                fontproperties=fontprop,
             )
 
         # y축의 범위를 정수로 표현하도록 설정
         plt.gca().yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-
-        # y축 눈금의 값에 '명' 추가
-        tick_labels = [f"{int(val)}명" for val in plt.gca().get_yticks()]
-        plt.gca().set_yticklabels(tick_labels)
-
-        # plt.title("날짜별 출석 수")
-        # plt.xlabel("날짜")
-        # plt.ylabel("출석 인원")
         plt.yticks([])  # y축 눈금 비활성화
 
         # 바깥 테두리 제거
