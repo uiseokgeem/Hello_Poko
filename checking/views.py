@@ -107,17 +107,17 @@ def chk(request):
 def attendance_detail(request):
     if request.method == "POST":
         date = request.POST.get("date", "")
+
         # 데이터 프레임 만들기
         filter_date = Attendance.objects.filter(date__icontains=date)
         df = pd.DataFrame(data=filter_date.values())  # 조회한 날짜 기준으로 df 생성
-
         result = (
             df.groupby(["teacher_name", "attendance"]).size().unstack()
         )  # 출석/결석 2개의 값을 보여주기 위해 groupby 사용한 후 unstack으로 데이터프레임으로 전환
         result = result[["결석", "출석"]]  # 그래프 가독성을 위한 순서 바꾸기
 
         ## 폰트 설정, 적용되는지 확인 필요
-        path = "/Users/ui-seok/Dev/poko/static/AppleGothic.ttf"
+        path = "./static/AppleGothic.ttf"
         fontprop = fm.FontProperties(fname=path, size=11)
         plt.rcParams["font.family"] = "AppleGothic"
         plt.rcParams["axes.unicode_minus"] = False
@@ -194,17 +194,7 @@ def attendance_detail(request):
         tabel_student = Attendance.objects.filter(date__icontains=date)
         tabel_teacher = Teacher.objects.all()
 
-        # names = Member.objects.all().filter(teacher__teacher_name=request.session["q"])
-
-        # html 로직 테스트
-        check = []
-        for teacher in tabel_teacher:
-            teacher.teacher_name
-            for student in tabel_student:
-                if student.teacher_name == teacher.teacher_name:
-                    check.append(student.name)
-
-        # count_text4 = f"{date}의 주일 예배 반별 출석/결석 현황 입니다."
+        # 알림창 내용
         count_text5 = f"{date}의 주일 예배 출석 {present_count}명/결석 {absent_count}명 입니다."
 
     else:
@@ -249,7 +239,7 @@ def attendance_detail(request):
             .reset_index(name="attendance")
         )
 
-        path = "/Users/ui-seok/Dev/poko/static/AppleGothic.ttf"
+        path = "./static/AppleGothic.ttf"
         fontprop = fm.FontProperties(fname=path, size=11)
         plt.rcParams["font.family"] = "AppleGothic"
         plt.rcParams["axes.unicode_minus"] = False
@@ -383,8 +373,8 @@ def attendance_group(request):  # 전체기간 반별 출결률 조회
 
     print(attendance_grouped)
 
-    ## 폰트 설정, 적용되는지 확인 필요
-    path = "/Users/ui-seok/Dev/poko/static/AppleGothic.ttf"
+    ## 폰트 설정
+    path = "./static/AppleGothic.ttf"
     fontprop = fm.FontProperties(fname=path, size=11)
     plt.rcParams["font.family"] = "AppleGothic"
     plt.rcParams["axes.unicode_minus"] = False
@@ -461,7 +451,7 @@ def attendance_ind(request):
     )
 
     ## 폰트 설정, 적용되는지 확인 필요
-    path = "/Users/ui-seok/Dev/poko/static/AppleGothic.ttf"
+    path = "./static/AppleGothic.ttf"
     fontprop = fm.FontProperties(fname=path, size=11)
     plt.rcParams["font.family"] = "AppleGothic"
     plt.rcParams["axes.unicode_minus"] = False
