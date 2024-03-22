@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <title>개인별 조회</title>
        <style>
+           .container {
+               max-width: 800px; /* 최대 너비를 조절하여 레이아웃을 확장 */
+               margin: 0 auto;
+           }
         body {
             background-color: #ffffff; /* 배경색 조절 */
             padding: 20px;
@@ -87,12 +91,12 @@
     </p>
 </div>
     <div class="container">
-        <div class="instagram-table text-center">
+        <div class="row">
             {{ graph|safe }}
         </div>
         <br><br>
-    
-    
+
+
         <div id="tabs" class="tab-button-container">
     {% for student in table_student %}
         <div class="tab-button" onclick="showTab('{{ student.name }}')">
