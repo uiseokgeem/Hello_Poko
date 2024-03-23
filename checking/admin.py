@@ -13,8 +13,9 @@ class MemberAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "teacher",
-        "grade_code",
         "name",
+        "grade",
+        "gender",
         "attendance",
         "absent",
     ]

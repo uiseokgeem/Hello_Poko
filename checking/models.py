@@ -18,9 +18,10 @@ class Member(models.Model):  # 모델명의 첫글자는 대문자로
         on_delete=models.CASCADE,
         related_name="members",
     )
-    grade_code = models.CharField(max_length=50, unique=False)
-    name = models.CharField(max_length=50)  # 최대로 넣을 수 있는 글자 수
-    attendance = models.IntegerField(default=0)
+    name = models.CharField(max_length=5)  # 최대로 넣을 수 있는 글자 수
+    grade = models.CharField(max_length=1, null=True, default=None)
+    gender = models.CharField(max_length=1, null=True, default=None)
+    attendance = models.IntegerField(default=0)  # 값이 없는 경우 default = 0
     absent = models.IntegerField(default=0)
 
     def __str__(self):  # 제목에 오브젝트가 아니라 이름이 나오도록
