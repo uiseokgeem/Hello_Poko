@@ -19,8 +19,8 @@ class Member(models.Model):  # 모델명의 첫글자는 대문자로
         related_name="members",
     )
     name = models.CharField(max_length=5)  # 최대로 넣을 수 있는 글자 수
-    grade = models.CharField(max_length=1, null=True, default=None)
-    gender = models.CharField(max_length=1, null=True, default=None)
+    grade = models.CharField(max_length=3, null=True, default=None)
+    gender = models.CharField(max_length=3, null=True, default=None)
     attendance = models.IntegerField(default=0)  # 값이 없는 경우 default = 0
     absent = models.IntegerField(default=0)
 
