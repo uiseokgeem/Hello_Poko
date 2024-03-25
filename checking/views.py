@@ -24,6 +24,7 @@ import pandas as pd
 import os
 from pathlib import Path
 from datetime import datetime, timedelta
+from collections import Counter
 
 
 # Create your views here.
@@ -47,80 +48,87 @@ def attendace_produce(request):
 
 
 def date(request):
-    # if request.method == "POST":
-    # request.session["q"] = query
-    query = request.POST["q"]
-    request.session["q"] = query  # 선생님 이름
-    print("session 확인", request.session["q"])
-    date = request.POST["date"]
-    # print("date 확인", date)
+    if request.method == "POST":
+        # 선생님 이름과 날짜를 세션에 저장
+        query = request.POST.get("q", "")
+        request.session["q"] = query  # 선생님 이름
+        date = request.POST.get("date", "")
 
-    # names = Member.objects.all().filter(teacher__teacher_name=query)
-    # names = (
-    #     Member.objects.all()
-    #     .filter(teacher__teacher_name=request.session["q"])
-    #     .values_list("name", flat=True)
-    # ).order_by("name")
-    # print(names)
+        # names = Member.objects.all().filter(teacher__teacher_name=query)
+        # names = (
+        #     Member.objects.all()
+        #     .filter(teacher__teacher_name=request.session["q"])
+        #     .values_list("name", flat=True)
+        # ).order_by("name")
+        # print(names)
 
-    names = (
-        Member.objects.all()
-        .filter(teacher__teacher_name=request.session["q"])
-        .values_list("name", flat=True)
-    )
-    names = sorted(list(names))
-    print(names)
+        names = (
+            Member.objects.all()
+            .filter(teacher__teacher_name=request.session["q"])
+            .values_list("name", flat=True)
+        )
+        names = sorted(list(names))
+        print(names)
 
-    return render(
-        request, "checking/attendnace_check.html", {"date": date, "names": names}
-    )
-
-
-# attendance.html에서 입력값을 가져와서 저장하기
+        return render(
+            request, "checking/attendnace_check.html", {"date": date, "names": names}
+        )
+    else:
+        return HttpResponse("잘못된 접근입니다.")
 
 
 def chk(request):
-    # 폼 입력값 가져와서 Attendance에 저장
-    attendance = Attendance()
-    attendance.name = request.POST["name"]
-    attendance.attendance = request.POST["attendance"]
-    attendance.date = request.POST["date"]
-    attendance.teacher_name = request.session["q"]
+    if request.method == "POST":
+        # 폼 입력값 가져와서 Attendance에 저장
+        attendance = Attendance()
+        attendance.name = request.POST["name"]
+        attendance.attendance = request.POST["attendance"]
+        attendance.date = request.POST["date"]
+        attendance.teacher_name = request.session["q"]
 
-    # Member의 attendance에  출결 횟수 저장
-    name = request.POST["name"]
-    member_info = get_object_or_404(Member, name=name)
-    if attendance.attendance == "출석":
-        member_info.attendance += 1
+        # 명단을 위해 학생들 이름 전부 가져오기
+        names = (
+            Member.objects.all()
+            .filter(teacher__teacher_name=request.session["q"])
+            .values_list("name", flat=True)
+        )
+        names = sorted(list(names))
 
-    elif attendance.attendance == "결석":
-        member_info.absent += 1
+        complete_names = request.session.get("complete_names", [])
+        # 현재 학생의 이름 추가
+        complete_names.append(attendance.name)
+        # 세션에 complete_names 저장
+        request.session["complete_names"] = complete_names
+        request.session["complete_names"] = []
+        print(request.session["complete_names"])
 
-    member_info.save()
-    attendance.save()
+        # Member의 attendance에  출결 횟수 저장
+        name = request.POST.get("name", "")
+        member_info = get_object_or_404(Member, name=name)
+        if attendance.attendance == "출석":
+            member_info.attendance += 1
 
-    # 명단을 위해 학생들 이름 전부 가져오기
-    names = (
-        Member.objects.all()
-        .filter(teacher__teacher_name=request.session["q"])
-        .values_list("name", flat=True)
-    )
-    names = sorted(list(names))
+        elif attendance.attendance == "결석":
+            member_info.absent += 1
 
-    # names = (
-    #     Member.objects.all()
-    #     .filter(teacher__teacher_name=request.session["q"])
-    #     .order_by("name")
-    # )
+        member_info.save()
+        attendance.save()
 
-    return render(
-        request,
-        "checking/attendnace_check.html",
-        {
-            "date": attendance.date,
-            "names": names,
-        },
-    )
+        # names = (
+        #     Member.objects.all()
+        #     .filter(teacher__teacher_name=request.session["q"])
+        #     .order_by("name")
+        # )
+
+        # Complete 버튼 만들기
+
+        return render(
+            request,
+            "checking/attendnace_check.html",
+            {"date": attendance.date, "names": names, "complete_names": complete_names},
+        )
+    else:
+        return HttpResponse("잘못된 접근입니다.")
 
 
 def attendance_detail(request):
