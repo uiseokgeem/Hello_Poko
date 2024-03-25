@@ -69,16 +69,7 @@
                             <input type="hidden" id="name" name="name" value={{ name }}>
                             <label><input type="radio" name="attendance" value="출석">출석</label>
                             <label><input type="radio" name="attendance" value="결석">결석</label>
-                            <!--<td><button type="submit" class="btn btn-primary">Check</button></td> -->
-                            <td>
-                                <button type="submit" class="btn btn-primary">
-                                {% if complete_names|default:"" and name in complete_names %}
-                                    Complete
-                                {% else %}
-                                    Check
-                                {% endif %}
-                                </button>
-                            </td>
+                            <td><button type="submit" class="btn btn-primary">Check</button></td>
                             </form>
                     </td>
                 </tr>

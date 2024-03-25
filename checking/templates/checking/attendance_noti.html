@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .quote-box {
+        max-width: 380px;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+        margin: 10px auto;
+    }
+
+    .quote-box h4 {
+        color: #1E90FF;
+    }
+
+    .quote-box p {
+        color: #555;
+    }
+</style>
+<body>
+    <div class="quote-box">
+        <h4>알림</h4>
+        <p>
+            {{ attendance_noti_text }}
+        </p>
+    </div>
+
+
+</body>
+</html>

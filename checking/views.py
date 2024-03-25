@@ -79,28 +79,38 @@ def date(request):
 
 def chk(request):
     if request.method == "POST":
+        checked_name = request.POST["name"]
+        checked_date = request.POST["date"]
+        if Attendance.objects.filter(name=checked_name, date=checked_date).exists():
+            noti = Attendance.objects.filter(name=checked_name, date=checked_date)
+            attendance_noti_text = (
+                f"{checked_name} 학생은 {noti[0].attendance}으로 확인이 완료 되었습니다!"
+            )
+            # referer = request.META.get("HTTP_REFERER")
+
+            return render(
+                request,
+                "checking/attendance_noti.html",
+                {
+                    "attendance_noti_text": attendance_noti_text,
+                },
+            )
+
         # 폼 입력값 가져와서 Attendance에 저장
         attendance = Attendance()
         attendance.name = request.POST["name"]
         attendance.attendance = request.POST["attendance"]
         attendance.date = request.POST["date"]
         attendance.teacher_name = request.session["q"]
+        checked_name = attendance.name = request.POST["name"]
 
-        # 명단을 위해 학생들 이름 전부 가져오기
+        # 명단에 표시 될 학생이름
         names = (
             Member.objects.all()
             .filter(teacher__teacher_name=request.session["q"])
             .values_list("name", flat=True)
         )
         names = sorted(list(names))
-
-        complete_names = request.session.get("complete_names", [])
-        # 현재 학생의 이름 추가
-        complete_names.append(attendance.name)
-        # 세션에 complete_names 저장
-        request.session["complete_names"] = complete_names
-        request.session["complete_names"] = []
-        print(request.session["complete_names"])
 
         # Member의 attendance에  출결 횟수 저장
         name = request.POST.get("name", "")
@@ -125,10 +135,14 @@ def chk(request):
         return render(
             request,
             "checking/attendnace_check.html",
-            {"date": attendance.date, "names": names, "complete_names": complete_names},
+            {
+                "date": attendance.date,
+                "names": names,
+            },
         )
+
     else:
-        return HttpResponse("잘못된 접근입니다.")
+        return HttpResponse("잘못된 접근 입니다.")
 
 
 def attendance_detail(request):
