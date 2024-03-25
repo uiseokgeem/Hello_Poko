@@ -68,7 +68,7 @@ def date(request):
         .filter(teacher__teacher_name=request.session["q"])
         .values_list("name", flat=True)
     )
-    names = list(names)
+    names = sorted(list(names))
     print(names)
 
     return render(
@@ -105,7 +105,7 @@ def chk(request):
         .filter(teacher__teacher_name=request.session["q"])
         .values_list("name", flat=True)
     )
-    names = list(names)
+    names = sorted(list(names))
 
     # names = (
     #     Member.objects.all()
