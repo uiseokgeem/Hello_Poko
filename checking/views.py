@@ -82,7 +82,11 @@ def chk(request):
 
     print(request.session["q"])  # request.POST["name"])
     # 학생들 이름 전부 가져오기
-    names = Member.objects.all().filter(teacher__teacher_name=request.session["q"])
+    names = (
+        Member.objects.all()
+        .filter(teacher__teacher_name=request.session["q"])
+        .order_by("name")
+    )
 
     # 출결 횟수 저장
     name = request.POST["name"]
@@ -95,7 +99,6 @@ def chk(request):
 
     member_info.save()
     attendance.save()
-    # poko_image_chk = GetImage.objects.get(pk=4).image.url
 
     return render(
         request,
