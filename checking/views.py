@@ -55,17 +55,24 @@ def date(request):
     date = request.POST["date"]
     # print("date 확인", date)
 
-    if query:
-        print("query 있음")
-        names = Member.objects.all().filter(teacher__teacher_name=query)
-    else:
-        print("query 없음")
-    poko_image = GetImage.objects.get(pk=2).image.url
+    # names = Member.objects.all().filter(teacher__teacher_name=query)
+    # names = (
+    #     Member.objects.all()
+    #     .filter(teacher__teacher_name=request.session["q"])
+    #     .values_list("name", flat=True)
+    # ).order_by("name")
+    # print(names)
+
+    names = (
+        Member.objects.all()
+        .filter(teacher__teacher_name=request.session["q"])
+        .values_list("name", flat=True)
+    )
+    names = list(names)
+    print(names)
 
     return render(
-        request,
-        "checking/attendnace_check.html",
-        {"date": date, "names": names, "poko_image": poko_image},
+        request, "checking/attendnace_check.html", {"date": date, "names": names}
     )
 
 
@@ -80,15 +87,7 @@ def chk(request):
     attendance.date = request.POST["date"]
     attendance.teacher_name = request.session["q"]
 
-    print(request.session["q"])  # request.POST["name"])
-    # 학생들 이름 전부 가져오기
-    names = (
-        Member.objects.all()
-        .filter(teacher__teacher_name=request.session["q"])
-        .order_by("name")
-    )
-
-    # 출결 횟수 저장
+    # Member의 attendance에  출결 횟수 저장
     name = request.POST["name"]
     member_info = get_object_or_404(Member, name=name)
     if attendance.attendance == "출석":
@@ -100,10 +99,27 @@ def chk(request):
     member_info.save()
     attendance.save()
 
+    # 명단을 위해 학생들 이름 전부 가져오기
+    names = (
+        Member.objects.all()
+        .filter(teacher__teacher_name=request.session["q"])
+        .values_list("name", flat=True)
+    )
+    names = list(names)
+
+    # names = (
+    #     Member.objects.all()
+    #     .filter(teacher__teacher_name=request.session["q"])
+    #     .order_by("name")
+    # )
+
     return render(
         request,
         "checking/attendnace_check.html",
-        {"date": attendance.date, "names": names},
+        {
+            "date": attendance.date,
+            "names": names,
+        },
     )
 
 

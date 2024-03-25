@@ -59,14 +59,14 @@
 <div class="regibox" align="center">
     <br class="regi-page" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
         <table>
-            {% for names in names %}
+            {% for name in names %}
                 <tr>
-                    <td><strong>{{ names.name }}</strong></td>
+                    <td><strong>{{ name }}</strong></td>
                     <td>
                         <form method="POST" action="/check/">
                             {% csrf_token %}
                             <input type="hidden" id="date" name="date" value={{ date }}>
-                            <input type="hidden" id="name" name="name" value={{ names.name }}>
+                            <input type="hidden" id="name" name="name" value={{ name }}>
                             <label><input type="radio" name="attendance" value="출석">출석</label>
                             <label><input type="radio" name="attendance" value="결석">결석</label>
                             <td><button type="submit" class="btn btn-primary">Check</button></td>
