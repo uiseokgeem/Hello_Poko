@@ -77,22 +77,34 @@ def date(request):
         return HttpResponse("잘못된 접근입니다.")
 
 
+def check_modi(request):
+    if request.method == "GET":  # 수정 버튼을 누른 경우, 현재 데이터를(수정해야하는) 가져와 templuate의에 전달
+        pass
+        return HttpResponse()
+
+    if request.method == "POST":  # 수정한 출석 내용을 POST로 전달 받고 model에 새롭게 수정
+        referer = request.META.get("HTTP_REFERER")
+        return redirect(referer)
+
+
 def chk(request):
     if request.method == "POST":
         checked_name = request.POST["name"]
         checked_date = request.POST["date"]
         if Attendance.objects.filter(name=checked_name, date=checked_date).exists():
             noti = Attendance.objects.filter(name=checked_name, date=checked_date)
+            # print(noti[0]) # 김규진
             attendance_noti_text = (
                 f"{checked_name} 학생은 {noti[0].attendance}으로 확인이 완료 되었습니다!"
             )
-            # referer = request.META.get("HTTP_REFERER")
 
             return render(
                 request,
                 "checking/attendance_noti.html",
                 {
                     "attendance_noti_text": attendance_noti_text,
+                    "checked_name": checked_name,
+                    "check_date": checked_date,
                 },
             )
 

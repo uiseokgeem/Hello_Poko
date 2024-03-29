@@ -12,5 +12,6 @@ urlpatterns = [
     path("attendance_detail/", views.attendance_detail),
     path("attendance_group/", views.attendance_group),
     path("ind/", views.attendance_ind),
+    path("check_modi/", views.check_modi),
     path("download_excel/", views.result_excel, name="download_excel"),
 ]
