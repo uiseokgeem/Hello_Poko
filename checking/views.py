@@ -71,20 +71,60 @@ def date(request):
         print(names)
 
         return render(
-            request, "checking/attendnace_check.html", {"date": date, "names": names}
+            request, "checking/attendance_check.html", {"date": date, "names": names}
         )
     else:
         return HttpResponse("잘못된 접근입니다.")
 
 
 def check_modi(request):
-    if request.method == "GET":  # 수정 버튼을 누른 경우, 현재 데이터를(수정해야하는) 가져와 templuate의에 전달
-        pass
-        return HttpResponse()
+    if request.method == "GET":
+        checked_name = request.GET["name"]
+        checked_date = request.GET["date"]
+        print(checked_name, checked_date)
+        modi = Attendance.objects.filter(name=checked_name, date=checked_date)
+        modi_name = modi[0].name
+        modi_date = modi[0].date
+        modi_attendance = modi[0].attendance
+        poko_image = GetImage.objects.get(pk=3).image.url
+        return render(
+            request,
+            "checking/attendance_noti.html",
+            context={
+                "modi_name": modi_name,
+                "modi_attendance": modi_attendance,
+                "modi_date": modi_date,
+                "poko_image": poko_image,
+            },
+        )
 
-    if request.method == "POST":  # 수정한 출석 내용을 POST로 전달 받고 model에 새롭게 수정
-        referer = request.META.get("HTTP_REFERER")
-        return redirect(referer)
+    if request.method == "POST":
+        modied_name = request.POST["modi_name"]
+        modied_date = request.POST["modi_date"]
+        modied_attendance = request.POST["modi_attendance"]
+        modied = Attendance.objects.filter(name=modied_name, date=modied_date)
+
+        if modied.exists():  # 해당하는 객체가 존재하는 경우
+            modied_instance = modied.first()  # 필터링된 첫 번째 객체를 가져옵니다.
+            modied_instance.attendance = modied_attendance  # attendance 값을 변경합니다.
+            modied_instance.save()  # 변경 사항을 저장합니다.
+        # print("변경 된 attendance", modied[0].attendance)
+        modied_attendance = modied[0].attendance  # 변경된 attendance 재선언
+        # referer = request.META.get("HTTP_REFERER")
+        attendance_modied_text = (
+            f"{modied_name} 학생은 {modied_attendance}으로 수정이 완료 되었습니다!"
+        )
+        poko_image = GetImage.objects.get(pk=3).image.url
+        return render(
+            request,
+            "checking/attendance_noti.html",
+            {
+                "attendance_modied_text": attendance_modied_text,
+                "poko_image": poko_image,
+            },
+        )
+    #
+    #     return redirect(referer)
 
 
 def chk(request):
@@ -93,7 +133,7 @@ def chk(request):
         checked_date = request.POST["date"]
         if Attendance.objects.filter(name=checked_name, date=checked_date).exists():
             noti = Attendance.objects.filter(name=checked_name, date=checked_date)
-            # print(noti[0]) # 김규진
+            poko_image = GetImage.objects.get(pk=3).image.url
             attendance_noti_text = (
                 f"{checked_name} 학생은 {noti[0].attendance}으로 확인이 완료 되었습니다!"
             )
@@ -104,17 +144,17 @@ def chk(request):
                 {
                     "attendance_noti_text": attendance_noti_text,
                     "checked_name": checked_name,
-                    "check_date": checked_date,
+                    "checked_date": checked_date,
+                    "poko_image": poko_image,
                 },
             )
 
-        # 폼 입력값 가져와서 Attendance에 저장
+        # 폼 입력값 가져와서 Attendance의 Attendance에 저장
         attendance = Attendance()
         attendance.name = request.POST["name"]
         attendance.attendance = request.POST["attendance"]
         attendance.date = request.POST["date"]
         attendance.teacher_name = request.session["q"]
-        checked_name = attendance.name = request.POST["name"]
 
         # 명단에 표시 될 학생이름
         names = (
@@ -136,17 +176,9 @@ def chk(request):
         member_info.save()
         attendance.save()
 
-        # names = (
-        #     Member.objects.all()
-        #     .filter(teacher__teacher_name=request.session["q"])
-        #     .order_by("name")
-        # )
-
-        # Complete 버튼 만들기
-
         return render(
             request,
-            "checking/attendnace_check.html",
+            "checking/attendance_check.html",
             {
                 "date": attendance.date,
                 "names": names,

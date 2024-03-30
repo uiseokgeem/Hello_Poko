@@ -72,6 +72,9 @@
                             <td><button type="submit" class="btn btn-primary">Check</button></td>
                             </form>
                     </td>
+                    {% if finisehd_text %}
+                        <td>{{ finisehd_text }}</td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </table>
