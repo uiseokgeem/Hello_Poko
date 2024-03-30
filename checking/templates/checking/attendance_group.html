@@ -34,6 +34,23 @@
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/index/">Koinonia Church</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/index">Poko</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="quote-box">
         <h4>알림</h4>
         <p>
@@ -55,6 +72,8 @@
                             {% csrf_token %}
                         <input type="text" name="q_ind" placeholder="조회할 반 입력" autofocus/>
                         <button type="submit" value="submit" class="btn btn-primary">조회</button>
+                        <br><br>
+                        <a href="/attendance_detail/" class="btn btn-primary">뒤로가기</a>
                     </form>
                 </div>
             </div>

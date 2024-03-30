@@ -83,6 +83,23 @@
     </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/index/">Koinonia Church</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/index">Poko</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
 <div class="quote-box">
     <h4>알림</h4>
     <p>
@@ -138,6 +155,26 @@
             <div class="instagram-table text-center">
                 <a href="{% url 'download_excel' %}" download="my_data.xlsx">Excel 파일 다운로드</a>
             </div>
+            <div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">양육사역 도우미 Poko</h5>
+                    <!-- 선생님 리스트 동적 생성 -->
+                    <form method="POST" action="/ind/">
+                            {% csrf_token %}
+                        <a href="/index/" class="btn btn-primary">Home</a>
+                        <a href="/attendance_group/" class="btn btn-primary">뒤로가기</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+            
+            
         </div>
             <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
