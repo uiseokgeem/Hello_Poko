@@ -2,3 +2,6 @@
 .env.prod
 .env.prod.db
 letsencrypt.sh
+backup
+backup.sh
+data
