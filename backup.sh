@@ -7,4 +7,4 @@ mkdir -p $BACKUP_DIR
 BACKUP_FILE="$BACKUP_DIR/db_backup_$(date +'%Y%m%d').sql.gz"
 
 # Docker 컨테이너에서 PostgreSQL 백업 실행
-sudo docker exec db pg_dump -U poko_db_user_prod -d poko_db_prod | gzip > $BACKUP_FILE
+sudo docker exec hello_poko_db_1 pg_dump -U poko_db_user_prod -d poko_db_prod | gzip > $BACKUP_FILE
