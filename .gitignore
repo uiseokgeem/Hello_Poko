@@ -8,6 +8,6 @@ data
 .DS_Store
 .env.dev.db
 .env.dev
-nginx.conf
-settings.py
+nginx/nginx.conf
+poko/settings.py
 
