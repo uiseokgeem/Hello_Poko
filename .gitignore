@@ -9,3 +9,5 @@ data
 .env.dev.db
 .env.dev
 nginx.conf
+setting.py
+
