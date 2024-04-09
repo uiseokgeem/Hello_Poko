@@ -152,6 +152,6 @@ AUTH_USER_MODEL = "auth.User"
 
 
 # 배포시 설정(csrf토큰 설정), 개발환경에서는 admin login issue로 사용하지 말 것
-# CSRF_TRUSTED_ORIGINS = ["https://www.hellopoko.com", "https://hellopoko.com"]
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
+ CSRF_TRUSTED_ORIGINS = ["https://www.hellopoko.com", "https://hellopoko.com"]
+ CSRF_COOKIE_SECURE = True
+ SESSION_COOKIE_SECURE = True
