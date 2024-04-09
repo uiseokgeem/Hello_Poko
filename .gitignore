@@ -5,3 +5,7 @@ letsencrypt.sh
 backup
 backup.sh
 data
+.DS_Store
+.env.dev.db
+.env.dev
+nginx.conf
