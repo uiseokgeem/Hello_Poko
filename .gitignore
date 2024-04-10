@@ -10,4 +10,8 @@ data
 .env.dev
 nginx/nginx.conf
 poko/settings.py
+docker-compose.yml
+docker-compose.dev.yml
+
+
 
