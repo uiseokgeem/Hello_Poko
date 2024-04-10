@@ -1,0 +1,54 @@
+# container for django-postresql-gunicorn and nginx
+version: '3'
+
+services:
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+
+  certbot:
+    image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+
+  web:
+    build: .
+    # command: python3 manage.py runserver 0.0.0.0:8000
+    command: gunicorn poko.wsgi:application --bind 0.0.0.0:8000
+
+    volumes:
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
+      - ./:/usr/src/app/
+    expose:
+      - 8000
+    env_file:
+      - ./.env.dev
+    depends_on:
+    - db
+
+  db:
+    image : postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.dev.db
+
+volumes:
+    postgres_data:
+    static_volume:
+    media_volume:
+
+
+

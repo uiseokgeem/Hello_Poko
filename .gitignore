@@ -8,10 +8,9 @@ data
 .DS_Store
 .env.dev.db
 .env.dev
-nginx/nginx.conf
-poko/settings.py
-docker-compose.yml
 docker-compose.dev.yml
-
+db.sqlite3
+backup.sh
+identifier.sqlite
 
 
