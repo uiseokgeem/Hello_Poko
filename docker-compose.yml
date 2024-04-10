@@ -1,5 +1,6 @@
 # container for django-postresql-gunicorn and nginx
 version: '3'
+
 services:
   nginx:
     build: ./nginx
@@ -7,10 +8,10 @@ services:
       - static_volume:/usr/src/app/static
       - media_volume:/usr/src/app/media
       - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/conf:/var/www/certbot
+      - ./data/certbot/www:/var/www/certbot
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     depends_on:
       - web
 
@@ -19,7 +20,7 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/conf:/var/www/certbot
+      - ./data/certbot/www:/var/www/certbot
 
   web:
     build: .
@@ -33,7 +34,7 @@ services:
     expose:
       - 8000
     env_file:
-      - ./.env.prod
+      - ./.env.dev
     depends_on:
     - db
 
@@ -42,7 +43,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.prod.db
+      - ./.env.dev.db
 
 volumes:
     postgres_data:
