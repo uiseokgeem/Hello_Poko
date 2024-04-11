@@ -12,3 +12,6 @@ docker-compose.dev.yml
 db.sqlite3
 backup.sh
 identifier.sqlite
+
+__pycache__/
+*.pyc
