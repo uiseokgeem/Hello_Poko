@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     # local apps
     "checking",
-    "login",
+    "common",
     "django.contrib.sites",
     "allauth",
     "allauth.account",
@@ -77,7 +77,9 @@ ROOT_URLCONF = "poko.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "checking", "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
