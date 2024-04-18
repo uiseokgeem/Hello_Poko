@@ -71,7 +71,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/index/">Koinonia Church</a>
+        <a class="navbar-brand" href="/checking/index/">Koinonia Church</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -79,7 +79,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/index">Poko</a>
+                    <a class="nav-link" href="/checking/index">Poko</a>
                 </li>
             </ul>
         </div>
@@ -104,7 +104,7 @@
     </div>
     
     <div class="regibox" align="center">
-            <form method="POST" action="/attendance_detail/">
+            <form method="POST" action="/checking/attendance_detail/">
                 {% csrf_token %}
                 <input type="date" id="date" name="date">
                 <br><br>
@@ -161,9 +161,9 @@
                     <div class="card-body text-center">
                         <h5 class="card-title">양육사역 도우미 Poko</h5>
                         <p class="card-text">전체기간 반별, 개인별 출결 조회를 할 수 있습니다.</p>
-                        <a href="/attendance_group/" class="btn btn-primary">전체기간 반별, 개인별 조회</a>
+                        <a href="/checking/attendance_group/" class="btn btn-primary">전체기간 반별, 개인별 조회</a>
                         <br><br>
-                        <a href="/index_detail/" class="btn btn-primary">뒤로가기</a>
+                        <a href="/checking/index_detail/" class="btn btn-primary">뒤로가기</a>
                     </div>
                     </div>
                 </div>

@@ -58,7 +58,7 @@
             <div class="card">
                 <div class="card-body text-center">
                     <h5 class="card-title">양육사역 도우미 Poko</h5>
-                    <form action="/check_modi/" method="get">
+                    <form action="/checking/check_modi/" method="get">
                         {% csrf_token %}
                         <input type="hidden" name="name" value="{{ checked_name }}">
                         <input type="hidden" name="date" value="{{ checked_date }}">
@@ -89,7 +89,7 @@
             <div class="card">
                 <div class="card-body text-center">
                     <h5 class="card-title">양육사역 도우미 Poko</h5>
-                    <form action="/check_modi/" method="post">
+                    <form action="/checking/check_modi/" method="post">
                         {% csrf_token %}
                         <p><input type="text" name="modi_date" value="{{ modi_date }}"></p>
                         <p><input type="text" name="modi_name" placeholder={{ modi_name }} value={{ modi_name }}></p>
@@ -119,8 +119,8 @@
             <div class="card">
                 <div class="card-body text-center">
                     <h5 class="card-title">양육사역 도우미 Poko</h5>
-                    <a href="/produce/" class="btn btn-primary">돌아가기</a>
-                    <a href="/attendance_detail/" class="btn btn-primary">출결현황</a>
+                    <a href="/checking/produce/" class="btn btn-primary">돌아가기</a>
+                    <a href="/checking/attendance_detail/" class="btn btn-primary">출결현황</a>
                 </div>
             </div>
         </div>
