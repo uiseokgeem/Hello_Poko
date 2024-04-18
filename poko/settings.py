@@ -175,3 +175,6 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 CSRF_TRUSTED_ORIGINS = ["https://www.poko-dev.com", "https://poko-dev.com"]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+# 로그인 성공후 이동하는 URL
+LOGIN_REDIRECT_URL = "/"
