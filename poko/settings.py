@@ -70,6 +70,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "common.middleware.LoginRequiredMiddleware",
 ]
 
 ROOT_URLCONF = "poko.urls"
@@ -177,4 +178,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # 로그인 성공후 이동하는 URL
-LOGIN_REDIRECT_URL = "/checking/"
+LOGIN_REDIRECT_URL = "/"
+
+# middleware login 인증이 아닌 경우 이동하는 URL
+LOGIN_URL = "/"
