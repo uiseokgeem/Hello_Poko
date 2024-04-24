@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # local apps
     "checking",
     "common",
+    "graph",
     "django.contrib.sites",
     "allauth",
     "allauth.account",
