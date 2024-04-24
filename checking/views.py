@@ -1,13 +1,7 @@
-import json
 import math
-
-from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render, redirect
-from django_pandas.io import read_frame
-import matplotlib.pyplot as plt
-from openpyxl.workbook import Workbook
+from django.shortcuts import render
 
 from .models import Attendance
 from .models import Teacher, Member, GetImage
@@ -16,18 +10,10 @@ import matplotlib
 matplotlib.use("Agg")
 from matplotlib import pyplot as plt, ticker
 from matplotlib import font_manager as fm
-from matplotlib import rcParams
-import numpy as np
+
 from io import StringIO, BytesIO
-from matplotlib.ticker import MaxNLocator
 import pandas as pd
-import os
-from pathlib import Path
 from datetime import datetime, timedelta
-from collections import Counter
-
-
-# Create your views here.
 
 
 def index(request):
@@ -53,14 +39,6 @@ def date(request):
         query = request.POST.get("q", "")
         request.session["q"] = query  # 선생님 이름
         date = request.POST.get("date", "")
-
-        # names = Member.objects.all().filter(teacher__teacher_name=query)
-        # names = (
-        #     Member.objects.all()
-        #     .filter(teacher__teacher_name=request.session["q"])
-        #     .values_list("name", flat=True)
-        # ).order_by("name")
-        # print(names)
 
         names = (
             Member.objects.all()
@@ -123,8 +101,6 @@ def check_modi(request):
                 "poko_image": poko_image,
             },
         )
-    #
-    #     return redirect(referer)
 
 
 def chk(request):
@@ -189,7 +165,7 @@ def chk(request):
         return HttpResponse("잘못된 접근 입니다.")
 
 
-def attendance_detail(request):
+def attendance_detail(request):  # 그래프 생성 view
     if request.method == "POST":
         date = request.POST.get("date", "")
 
@@ -372,6 +348,7 @@ def attendance_detail(request):
         count_graph = imgdata.getvalue()
 
         ############### 총 인원 요약 ################
+
         names_list = Member.objects.all().values_list("name", flat=True)  # 제적인원 구하기
         # 지난 일요일 출석 인원수 구하기
         # print("요일 확인", presunday_text)

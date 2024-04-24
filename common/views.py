@@ -8,7 +8,7 @@ def logout_view(request):
     return redirect("/")
 
 
-def index_common(request):
+def index_common(request):  # dashboard
     poko_image = GetImage.objects.get(pk=2).image.url
     return render(
         request,
