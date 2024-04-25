@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--모바일 장치에서 웹페이지가 올바르게 표시되게 함-->
+    <title>Hello! POKO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .resized-image {
+            width: 400px;
+            height: 300px;
+            margin: auto; /* 수평 가운데 정렬을 위해 margin을 활용 */
+            display: block; /* 블록 요소로 설정하여 margin 속성이 적용되도록 함 */
+        }
+
+        .container {
+            max-width: 1200px; /* 최대 너비를 조절하여 레이아웃을 확장 */
+            margin: auto;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/index/">Koinonia Church</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="">Poko</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+<div class="container mt-4">
+    <div class="row">
+        <img src="{% static 'common/images/POKO_ver.1.jpg' %}" alt="Poko" width="" height="300" class="resized-image">
+        <div class="col-md-8 offset-md-2">
+            <!-- 출석부 카테고리 -->
+            <div class="card">
+                <div class="card-body text-center">
+                        <div class="container my-3">
+                            <form method="post" action="{% url 'common:login' %}">
+                                {% csrf_token %}
+                                {% include "common/form_errors.html" %}
+                                <div class="mb-3">
+                                    <label for="username">사용자ID</label>
+                                    <input type="text" class="form-control" name="username" id="username"
+                                           value="{{ form.username.value|default_if_none:'' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password">비밀번호</label>
+                                    <input type="password" class="form-control" name="password" id="password"
+                                           value="{{ form.password.value|default_if_none:'' }}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">로그인</button>
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+

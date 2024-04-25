@@ -85,7 +85,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/index/">Koinonia Church</a>
+        <a class="navbar-brand" href="/checking/index/">Koinonia Church</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -93,7 +93,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/index">Poko</a>
+                    <a class="nav-link" href="/checking/index">Poko</a>
                 </li>
             </ul>
         </div>
@@ -162,10 +162,10 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">양육사역 도우미 Poko</h5>
                     <!-- 선생님 리스트 동적 생성 -->
-                    <form method="POST" action="/ind/">
+                    <form method="POST" action="/checking/ind/">
                             {% csrf_token %}
-                        <a href="/index/" class="btn btn-primary">Home</a>
-                        <a href="/attendance_group/" class="btn btn-primary">뒤로가기</a>
+                        <a href="/checking/index/" class="btn btn-primary">Home</a>
+                        <a href="/checking/attendance_group/" class="btn btn-primary">뒤로가기</a>
                     </form>
                 </div>
             </div>

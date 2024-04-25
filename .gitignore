@@ -13,4 +13,7 @@ db.sqlite3
 backup.sh
 identifier.sqlite
 
-
+# Ignore Python byte-compiled files
+__pycache__/
+*.pyc
+*.pyo

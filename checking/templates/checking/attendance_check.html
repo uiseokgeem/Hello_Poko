@@ -59,11 +59,11 @@
 <div class="regibox" align="center">
     <br class="regi-page" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
         <table>
-            {% for name in names %}
+            {% for name in user_students %}
                 <tr>
                     <td><strong>{{ name }}</strong></td>
                     <td>
-                            <form method="POST" action="/check/">
+                            <form method="POST" action="/checking/check/">
                             {% csrf_token %}
                             <input type="hidden" id="date" name="date" value={{ date }}>
                             <input type="hidden" id="name" name="name" value={{ name }}>
@@ -79,7 +79,7 @@
             {% endfor %}
         </table>
         <br><br>
-        <a href="/index/" class="btn btn-primary">Home</a>
+        <a href="/checking/index/" class="btn btn-primary">Home</a>
     </div>
 </body>
 </html>

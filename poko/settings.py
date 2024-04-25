@@ -52,6 +52,13 @@ INSTALLED_APPS = [
     "debug_toolbar",
     # local apps
     "checking",
+    "common",
+    "graph",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
 
 MIDDLEWARE = [
@@ -63,6 +70,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "common.middleware.LoginRequiredMiddleware",
 ]
 
 ROOT_URLCONF = "poko.urls"
@@ -70,7 +79,9 @@ ROOT_URLCONF = "poko.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "checking", "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -150,8 +161,25 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 AUTH_USER_MODEL = "auth.User"
 
+# Django-allauth
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 # 배포시 설정(csrf토큰 설정), 개발환경에서는 admin login issue로 사용하지 말 것
 CSRF_TRUSTED_ORIGINS = ["https://www.poko-dev.com", "https://poko-dev.com"]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+# 로그인 성공후 이동하는 URL
+LOGIN_REDIRECT_URL = "/"
+
+# middleware login 인증이 아닌 경우 이동하는 URL
+LOGIN_URL = "/"
