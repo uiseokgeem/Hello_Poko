@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt, ticker
 from matplotlib import font_manager as fm
 
 # Models
-from checking.models import Attendance, Member, Teacher
+from checking.models import Attendance, Member
 
 
 def ApiGraph6week(request):

@@ -1,14 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-
-from .models import Attendance
-from .models import Teacher, Member, GetImage
+from .models import Attendance, Member, GetImage
+from django.contrib.auth.models import User
 import matplotlib
 
 matplotlib.use("Agg")
-from io import StringIO, BytesIO
-import pandas as pd
 
 
 def index(request):
@@ -21,85 +18,42 @@ def index_detail(request):
     return render(request, "checking/index_detail.html", {"poko_image": poko_image})
 
 
-def attendace_produce(request):
-    poko_image = GetImage.objects.get(pk=3).image.url
-    return render(
-        request, "checking/attendance_produce.html", context={"poko_image": poko_image}
-    )
+def ApiAttendanceProduce(request):
+    if request.user.is_authenticated:
+        teacher_name = request.user.first_name + request.user.last_name
+        # print(teacher_name)
+        poko_image = GetImage.objects.get(pk=3).image.url
+        return render(
+            request,
+            "checking/attendance_produce.html",
+            context={"poko_image": poko_image, "teacher_name": teacher_name},
+        )
 
 
-def date(request):
-    if request.method == "POST":
-        # 선생님 이름과 날짜를 세션에 저장
-        query = request.POST.get("q", "")
-        request.session["q"] = query  # 선생님 이름
+def ApiAttendanceList(request):
+    if request.method == "POST" and request.user.is_authenticated:
         date = request.POST.get("date", "")
+        user_name = request.user.username  # 로그인 정보를 통해 선생님 이름 가져오기
 
-        names = (
+        user_students = (
             Member.objects.all()
-            .filter(teacher__teacher_name=request.session["q"])
+            .filter(teacher=user_name)
             .values_list("name", flat=True)
         )
-        names = sorted(list(names))
-        print(names)
+        user_students = sorted(list(user_students))
 
         return render(
-            request, "checking/attendance_check.html", {"date": date, "names": names}
+            request,
+            "checking/attendance_check.html",
+            {"date": date, "user_students": user_students},
         )
     else:
         return HttpResponse("잘못된 접근입니다.")
 
 
-def check_modi(request):
-    if request.method == "GET":
-        checked_name = request.GET["name"]
-        checked_date = request.GET["date"]
-        print(checked_name, checked_date)
-        modi = Attendance.objects.filter(name=checked_name, date=checked_date)
-        modi_name = modi[0].name
-        modi_date = modi[0].date
-        modi_attendance = modi[0].attendance
-        poko_image = GetImage.objects.get(pk=3).image.url
-        return render(
-            request,
-            "checking/attendance_noti.html",
-            context={
-                "modi_name": modi_name,
-                "modi_attendance": modi_attendance,
-                "modi_date": modi_date,
-                "poko_image": poko_image,
-            },
-        )
-
-    if request.method == "POST":
-        modied_name = request.POST["modi_name"]
-        modied_date = request.POST["modi_date"]
-        modied_attendance = request.POST["modi_attendance"]
-        modied = Attendance.objects.filter(name=modied_name, date=modied_date)
-
-        if modied.exists():  # 해당하는 객체가 존재하는 경우
-            modied_instance = modied.first()  # 필터링된 첫 번째 객체를 가져옵니다.
-            modied_instance.attendance = modied_attendance  # attendance 값을 변경합니다.
-            modied_instance.save()  # 변경 사항을 저장합니다.
-        # print("변경 된 attendance", modied[0].attendance)
-        modied_attendance = modied[0].attendance  # 변경된 attendance 재선언
-        # referer = request.META.get("HTTP_REFERER")
-        attendance_modied_text = (
-            f"{modied_name} 학생은 {modied_attendance}으로 수정이 완료 되었습니다!"
-        )
-        poko_image = GetImage.objects.get(pk=3).image.url
-        return render(
-            request,
-            "checking/attendance_noti.html",
-            {
-                "attendance_modied_text": attendance_modied_text,
-                "poko_image": poko_image,
-            },
-        )
-
-
-def chk(request):
-    if request.method == "POST":
+def ApiAttendanceChecking(request):
+    # 출석체크 여부 확인
+    if request.method == "POST" and request.user.is_authenticated:
         checked_name = request.POST["name"]
         checked_date = request.POST["date"]
         if Attendance.objects.filter(name=checked_name, date=checked_date).exists():
@@ -120,22 +74,30 @@ def chk(request):
                 },
             )
 
-        # 폼 입력값 가져와서 Attendance의 Attendance에 저장
-        attendance = Attendance()
-        attendance.name = request.POST["name"]
-        attendance.attendance = request.POST["attendance"]
-        attendance.date = request.POST["date"]
-        attendance.teacher_name = request.session["q"]
+        # 출석 입력이 없다면 form 입력값 가져오기
+        user_name = request.user.username
+        teacher = User.objects.get(username=user_name)  # 외래키 필드의 값은 객체 상태로 저장한다.
+        name = request.POST["name"]
+        date = request.POST["date"]
+        attendance = request.POST["attendance"]
 
-        # 명단에 표시 될 학생이름
-        names = (
+        # form 입력값을 Attendance의 각 필드에 저장
+        attendance = Attendance.objects.create(
+            teacher=teacher,
+            name=name,
+            date=date,
+            attendance=attendance,
+        )
+
+        # 출석 입력 후 명단에 표시 될 학생 이름
+        user_students = (
             Member.objects.all()
-            .filter(teacher__teacher_name=request.session["q"])
+            .filter(teacher=user_name)
             .values_list("name", flat=True)
         )
-        names = sorted(list(names))
+        user_students = sorted(list(user_students))
 
-        # Member의 attendance에  출결 횟수 저장
+        # 츨석결과를 Member의 attendance에  출결 횟수 저장
         name = request.POST.get("name", "")
         member_info = get_object_or_404(Member, name=name)
         if attendance.attendance == "출석":
@@ -152,9 +114,60 @@ def chk(request):
             "checking/attendance_check.html",
             {
                 "date": attendance.date,
-                "names": names,
+                "user_students": user_students,
             },
         )
 
     else:
         return HttpResponse("잘못된 접근 입니다.")
+
+
+def ApiAttendanceModify(request):
+    # 수정 필요가 확인 있는 이름
+    if request.method == "GET" and request.user.is_authenticated:
+        checked_name = request.GET["name"]
+        checked_date = request.GET["date"]
+
+        # 수정할 이름
+        modi = Attendance.objects.filter(name=checked_name, date=checked_date)
+        modi_name = modi[0].name
+        modi_date = modi[0].date
+        modi_attendance = modi[0].attendance
+        poko_image = GetImage.objects.get(pk=3).image.url
+        return render(
+            request,
+            "checking/attendance_noti.html",
+            context={
+                "modi_name": modi_name,
+                "modi_attendance": modi_attendance,
+                "modi_date": modi_date,
+                "poko_image": poko_image,
+            },
+        )
+
+    # 수정 된 이름
+    if request.method == "POST" and request.user.is_authenticated:
+        modied_name = request.POST["modi_name"]
+        modied_date = request.POST["modi_date"]
+        modied_attendance = request.POST["modi_attendance"]
+        modied = Attendance.objects.filter(name=modied_name, date=modied_date)
+
+        if modied.exists():  # 해당하는 객체가 존재하는 경우
+            modied_instance = modied.first()  # 필터링된 첫 번째 객체를 가져온다.
+            modied_instance.attendance = modied_attendance  # attendance 값을 변경합니다.
+            modied_instance.save()  # 변경 사항을 저장한다.
+
+        modied_attendance = modied[0].attendance  # 변경 된 attendance 재선언
+
+        attendance_modied_text = (
+            f"{modied_name} 학생은 {modied_attendance}으로 수정이 완료 되었습니다!"
+        )
+        poko_image = GetImage.objects.get(pk=3).image.url
+        return render(
+            request,
+            "checking/attendance_noti.html",
+            {
+                "attendance_modied_text": attendance_modied_text,
+                "poko_image": poko_image,
+            },
+        )

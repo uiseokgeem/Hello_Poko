@@ -1,39 +1,31 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
-class Teacher(models.Model):
-    teacher_name = models.CharField(max_length=50, unique=True)  # 학년관리
-    # grade_code = models.CharField(max_length=50, unique=False)  # member로 빠져야 할 듯
-
-    def __str__(self):  # 제목에 오브젝트가 아니라 이름이 나오도록
-        return self.teacher_name
-
-    class Meta:
-        ordering = ["-id"]
-
-
-class Member(models.Model):  # 모델명의 첫글자는 대문자로
+class Member(models.Model):
     teacher = models.ForeignKey(
-        Teacher,
+        User,
         on_delete=models.CASCADE,
         related_name="members",
-    )
+        to_field="username",
+    )  # to_field : 외래키로 지정된 모델의 특정 필드값을 참조할 수 있게함.
     name = models.CharField(max_length=5)  # 최대로 넣을 수 있는 글자 수
     grade = models.CharField(max_length=3, null=True, default=None)
     gender = models.CharField(max_length=3, null=True, default=None)
     attendance = models.IntegerField(default=0)  # 값이 없는 경우 default = 0
     absent = models.IntegerField(default=0)
 
-    def __str__(self):  # 제목에 오브젝트가 아니라 이름이 나오도록
+    def __str__(self):
         return self.name
 
 
-class Attendance(models.Model):  # 모델명의 첫글자는 대문자로
+class Attendance(models.Model):
+    teacher = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="attendance", to_field="username"
+    )
     name = models.CharField(max_length=50)  # 최대로 넣을 수 있는 글자 수
     attendance = models.CharField(max_length=50)
     date = models.CharField(max_length=50)
-    teacher_name = models.CharField(max_length=10)
-    # grade_description = models.OneToOneField(Grade, on_delete=models.CASCADE) # OneToOneField 모델
 
     def __str__(self):
         return self.name

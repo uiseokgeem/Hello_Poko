@@ -60,7 +60,8 @@
     <div class="quote-box">
         <h4>알림</h4>
         <p>
-            출석부를 생성할 날짜와 선생님의 이름을 입력 하세요!
+            {{ teacher_name }}선생님 출석부를 생성합니다.
+            날짜를 선택해주세요!
         </p>
     </div>
     <div class="regibox" align="center">
@@ -69,7 +70,7 @@
                 {% csrf_token %}
             <input type="date" id="date" name="date"><!-- 날짜 데이터 전송 -->
             <br><br>
-            <input type="text" name="q" placeholder="선생님" autofocus><!-- 선생님 데이터 전송 -->
+            <input type="hidden" id="teacher_id" name="teacher_name" value="{{ teacher_name }}">
             <br><br>
             <button type="submit" value="submit" class="btn btn-primary">출석부 생성</button>
             <br><br>
