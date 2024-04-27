@@ -11,9 +11,11 @@ from matplotlib import font_manager as fm
 
 # Models
 from checking.models import Attendance, Member
+from django.contrib.auth.models import User
 
 
 def ApiGraph6week(request):
+    # 현재 날짜 기준 최근 5주의 일요일 구하기
     current_date = datetime.now()  # 현재 요일 확인 (0: 월요일, 1: 화요일, ..., 6: 일요일)
     current_weekday = current_date.weekday()  # 요일, 현재 날짜에서 현재 요일을 뺀 후, 일요일까지의 날짜를 계산
     days_until_sunday = (current_weekday - 6) % 7  # 메모 참조
@@ -26,27 +28,30 @@ def ApiGraph6week(request):
         # 최근 주일 기준으로 확인할 주간 설정(현재코드에서는 5주+현재 주간), 단 조회하려는 주간에 데이터가 동일하게 있어야함, 출석인원 변동 고려
         list_sunday.append(pre_sunday - timedelta(weeks=i))
     date_strings = [dt.strftime("%Y-%m-%d") for dt in list_sunday]
-    print("날짜 확인", len(date_strings), date_strings)
+    print("날짜 확인", date_strings)
 
-    ######################## 현재 날짜 기준 최근 5주의 일요일 구하기 ########################
     # 최근 5주간의 일요일 date 리스트로 데이터프레임 생성 후 병합하기
     empty_df = pd.DataFrame()
     for i in range(len(date_strings)):
         attendane_account = Attendance.objects.filter(date__icontains=date_strings[i])
         attendance_df = pd.DataFrame(list(attendane_account.values()))
         frames = [empty_df, attendance_df]
-        empty_df = pd.concat(frames, ignore_index=True)
-        # 인원이 변동되어 데이터프레임의 길이가 맞지않아 concat이 되지 않을 것을 대비해 데이터프레임 형태 확인하기
+        empty_df = pd.concat(
+            frames, ignore_index=True
+        )  # 인원이 변동되어 데이터프레임의 길이가 맞지않아 concat이 되지 않을 것을 대비해 데이터프레임 형태 확인하기
 
-    empty_df["date"] = pd.to_datetime(empty_df["date"]).dt.strftime(
-        "%m-%d"
-    )  # 그래프에 표기 될 날짜 형식 변경
+    # 그래프에 표기 될 날짜 형식 변경
+    empty_df["date"] = pd.to_datetime(empty_df["date"]).dt.strftime("%m-%d")
+
+    # 주간별 출석인원 수 데이터프레임 생성
     attendance_counts = (
         empty_df[empty_df["attendance"] == "출석"]
         .groupby("date")
         .size()
         .reset_index(name="attendance")
     )
+
+    print("attendance_counts!!", attendance_counts)
 
     path = "./static/AppleGothic.ttf"
     fontprop = fm.FontProperties(fname=path, size=11)
@@ -92,21 +97,22 @@ def ApiGraph6week(request):
         # SVG 문자열을 가져와서 전달
         graph_6w = imgdata.getvalue()
 
-        ############### 총 인원 요약 ################
+        # information에 표시할 내용
         names_list = Member.objects.all().values_list("name", flat=True)  # 제적인원 구하기
         # 지난 일요일 출석 인원수 구하기
-        # print("요일 확인", presunday_text)
+
         attendance_value = attendance_counts[
             attendance_counts["date"] == presunday_text
         ]
-        # print("확인", attendance_value)
+
         attendance_value = attendance_value["attendance"].values[0]
         # -> 반영 되어야 할 기간의 출석 데이터가 없으면 오류가 발생함
 
         names_count = len(names_list)
-        count_text1 = f"{presunday_text} 주일 기준 지난 6주간 출석 현황 입니다."
-        count_text2 = f"{current_date.strftime('%Y-%m-%d')} 기준 제적 총 {names_count} 명으로"
-        count_text3 = f"{presunday_text} 주일 예배 출석 인원은 총 {attendance_value}명 입니다."
+        current_date = current_date.strftime("%Y-%m-%d")
+        count_text1 = f" 지난 {current_date[:4]}년 {presunday_text[1:2]}월 {presunday_text[-2:]}일 주일 기준 6주간 출석 현황 입니다."
+        count_text2 = f"오늘 {current_date[:4]}년 {current_date[6:7]}월 {current_date[8:10]}일 기준 제적 총 {names_count}명으로"
+        count_text3 = f"{presunday_text[1:2]}월 {presunday_text[-2:]}일 주일 예배 출석 인원은 총 {attendance_value}명 입니다."
 
         return graph_6w, count_text1, count_text2, count_text3
 
@@ -207,11 +213,39 @@ def ApiGraphWeekly(request, date):
         date = request.POST.get("date", "")
 
         # 데이터 프레임 만들기
+        users = User.objects.all()  # User모델에서 그래프에 반영할 teacher_name 생성
+        user_df = pd.DataFrame(columns=["teacher_id", "teacher_name"])
+
+        # print("username 확인", users[0].username)
+
+        for user in users:
+            user_info = [
+                user.username,
+                user.first_name + user.last_name,
+            ]
+            user_df = user_df._append(
+                pd.Series(user_info, index=user_df.columns), ignore_index=True
+            )
+
+        members = Member.objects.all()  # 학년정보 생성
+        member_df = pd.DataFrame(columns=["teacher_id", "grade_info"])
+        for member in members:
+            member_info = [member.teacher_id, member.grade + member.gender]
+            member_df = member_df._append(
+                pd.Series(member_info, index=member_df.columns), ignore_index=True
+            )
+
         filter_date = Attendance.objects.filter(date__icontains=date)
-        df = pd.DataFrame(data=filter_date.values())  # 조회한 날짜 기준으로 df 생성
+        date_df = pd.DataFrame(data=filter_date.values())
+
+        df = pd.merge(
+            date_df, user_df, on="teacher_id", how="left"
+        )  # teacher_id 기준으로 merge
+
         result = (
             df.groupby(["teacher_name", "attendance"]).size().unstack()
         )  # 출석/결석 2개의 값을 보여주기 위해 groupby 사용한 후 unstack으로 데이터프레임으로 전환
+
         result = result[["결석", "출석"]]  # 그래프 가독성을 위한 순서 바꾸기
 
         ## 폰트 설정, 적용되는지 확인 필요
@@ -291,12 +325,21 @@ def ApiGraphWeekly(request, date):
 
         # 조회한 주의 이름 출석결석 table tab 표기
         tabel_student = Attendance.objects.filter(date__icontains=date)
-        tabel_teacher = Teacher.objects.all()
+        tabel_teacher = list(user_df["teacher_name"].values)  # Teacher.objects.all()
+        year, month, day = date.split("-")
 
         # 알림창 내용
-        count_text5 = f"{date}의 주일 예배 출석 {present_count}명/결석 {absent_count}명 입니다."
+        count_text5 = f"{year}년 {month}월 {day}일 주간 출결 입니다."
+        count_text6 = f"출석 {present_count}명/결석 {absent_count}명 입니다."
 
-        return graph_weekly, tabel_student, tabel_teacher, count_text5
+        return (
+            graph_weekly,
+            tabel_student,
+            tabel_teacher,
+            count_text5,
+            count_text6,
+            users,
+        )
 
 
 def ApiGraphIndividual(request, teacher):
