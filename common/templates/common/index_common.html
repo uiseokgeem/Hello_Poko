@@ -192,7 +192,11 @@
                                         {% if user.username == student.teacher_id %}
                                             <tr>
                                                 <td>{{ student.name }}</td>
-                                                <td>{{ student.attendance }}</td>
+                                                {% if student.attendance == '결석' %}
+                                                    <td style="color:#F08080;">{{ student.attendance }}</td>
+                                                {% else %}
+                                                    <td>{{ student.attendance }}</td>
+                                                {% endif %}
                                             </tr>
                                         {% endif %}
                                     {% endfor %}

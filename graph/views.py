@@ -18,17 +18,16 @@ def ApiGraph6week(request):
     # 현재 날짜 기준 최근 5주의 일요일 구하기
     current_date = datetime.now()  # 현재 요일 확인 (0: 월요일, 1: 화요일, ..., 6: 일요일)
     current_weekday = current_date.weekday()  # 요일, 현재 날짜에서 현재 요일을 뺀 후, 일요일까지의 날짜를 계산
-    days_until_sunday = (current_weekday - 6) % 7  # 메모 참조
+    days_until_sunday = (current_weekday - 6) % 7
     pre_sunday = current_date - timedelta(days=days_until_sunday)
-    print(pre_sunday.strftime("%Y-%m-%d"))
-    presunday_text = pre_sunday.strftime("%m-%d")
+    presunday_text = pre_sunday.strftime("%m-%d")  # 직전 주일 날짜
 
     list_sunday = [pre_sunday]
-    for i in range(1, 6):
-        # 최근 주일 기준으로 확인할 주간 설정(현재코드에서는 5주+현재 주간), 단 조회하려는 주간에 데이터가 동일하게 있어야함, 출석인원 변동 고려
+    for i in range(
+        1, 6
+    ):  # 최근 주일 기준으로 확인할 주간 설정(현재코드에서는 5주+현재 주간), 단 조회하려는 주간에 데이터가 동일하게 있어야함, 출석인원 변동 고려
         list_sunday.append(pre_sunday - timedelta(weeks=i))
     date_strings = [dt.strftime("%Y-%m-%d") for dt in list_sunday]
-    print("날짜 확인", date_strings)
 
     # 최근 5주간의 일요일 date 리스트로 데이터프레임 생성 후 병합하기
     empty_df = pd.DataFrame()
@@ -51,8 +50,6 @@ def ApiGraph6week(request):
         .reset_index(name="attendance")
     )
 
-    print("attendance_counts!!", attendance_counts)
-
     path = "./static/AppleGothic.ttf"
     fontprop = fm.FontProperties(fname=path, size=11)
 
@@ -61,7 +58,7 @@ def ApiGraph6week(request):
     plt.rcParams["axes.unicode_minus"] = False
 
     # 그래프 그리기
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))  # 10, 6
     plt.plot(
         attendance_counts["date"],
         attendance_counts["attendance"],
@@ -81,40 +78,46 @@ def ApiGraph6week(request):
             fontproperties=fontprop,
         )
 
-        # y축의 범위를 정수로 표현하도록 설정
-        plt.gca().yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-        plt.yticks([])  # y축 눈금 비활성화
+    # y축의 범위를 정수로 표현하도록 설정
+    plt.gca().yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+    plt.yticks([])  # y축 눈금 비활성화
 
-        # 바깥 테두리 제거
-        for spine in plt.gca().spines.values():
-            spine.set_visible(False)
+    # 바깥 테두리 제거
+    for spine in plt.gca().spines.values():
+        spine.set_visible(False)
 
-        # 그래프를 SVG 문자열로 저장
-        imgdata = StringIO()
-        plt.savefig(imgdata, format="svg")
-        imgdata.seek(0)
+    # 그래프를 SVG 문자열로 저장
+    imgdata = StringIO()
+    plt.savefig(imgdata, format="svg")
+    imgdata.seek(0)
 
-        # SVG 문자열을 가져와서 전달
-        graph_6w = imgdata.getvalue()
+    # SVG 문자열을 가져와서 전달
+    graph_6w = imgdata.getvalue()
 
-        # information에 표시할 내용
-        names_list = Member.objects.all().values_list("name", flat=True)  # 제적인원 구하기
-        # 지난 일요일 출석 인원수 구하기
+    # information에 표시할 내용
 
-        attendance_value = attendance_counts[
-            attendance_counts["date"] == presunday_text
-        ]
+    # 제적인원 구하기
+    names_list = Member.objects.all().values_list("name", flat=True)
+    # 직전 일요일 출석 인원수 구하기
+    attendance_value = attendance_counts[attendance_counts["date"] == presunday_text]
+    attendance_value = attendance_value["attendance"].values[0]
+    # -> 반영 되어야 할 기간의 출석 데이터가 없으면 오류가 발생함
 
-        attendance_value = attendance_value["attendance"].values[0]
-        # -> 반영 되어야 할 기간의 출석 데이터가 없으면 오류가 발생함
+    names_count = len(names_list)
+    current_date = current_date.strftime("%Y-%m-%d")
+    year, month, day = current_date.split("-")  # 결과 내용에 활용할 오늘 날짜
+    presunday_month, presunday_day = presunday_text.split("-")
+    print(presunday_text, year, month, day)
 
-        names_count = len(names_list)
-        current_date = current_date.strftime("%Y-%m-%d")
-        count_text1 = f" 지난 {current_date[:4]}년 {presunday_text[1:2]}월 {presunday_text[-2:]}일 주일 기준 6주간 출석 현황 입니다."
-        count_text2 = f"오늘 {current_date[:4]}년 {current_date[6:7]}월 {current_date[8:10]}일 기준 제적 총 {names_count}명으로"
-        count_text3 = f"{presunday_text[1:2]}월 {presunday_text[-2:]}일 주일 예배 출석 인원은 총 {attendance_value}명 입니다."
+    count_text1 = (
+        f" 지난 {year}년 {presunday_month}월 {presunday_day}일 주일 기준 6주간 출석 현황 입니다."
+    )
+    count_text2 = f"오늘 {year}년 {month}월 {day}일 기준 제적 총 {names_count}명으로"
+    count_text3 = (
+        f"{presunday_month}월 {presunday_day}일 주일 예배 출석 인원은 총 {attendance_value}명 입니다."
+    )
 
-        return graph_6w, count_text1, count_text2, count_text3
+    return graph_6w, count_text1, count_text2, count_text3
 
 
 def ApiGraphRatiobyClass(request):
@@ -200,10 +203,6 @@ def ApiGraphRatiobyClass(request):
 
     # SVG 문자열을 가져와서 전달
     graph_rbc = imgdata.getvalue()
-
-    # svg_bytes = imgdata.getvalue()  # svg 그래프 크기 조절을 위해 추가 됨
-    # graph = f'<div style="width: 70%; margin: 0 auto;">{svg_bytes}</div>'
-    # svg 내부 스타일 적용은 웹에서 잘 이루어지나 모바일에서 정렬이 맞지 않음
 
     return graph_rbc
 
@@ -324,7 +323,9 @@ def ApiGraphWeekly(request, date):
         # 리스트로 반환됨, [0]지정 필수
 
         # 조회한 주의 이름 출석결석 table tab 표기
-        tabel_student = Attendance.objects.filter(date__icontains=date)
+        tabel_student = Attendance.objects.filter(date__icontains=date).order_by(
+            "attendance"
+        )
         tabel_teacher = list(user_df["teacher_name"].values)  # Teacher.objects.all()
         year, month, day = date.split("-")
 
