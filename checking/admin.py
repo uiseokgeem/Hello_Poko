@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Member, Attendance, GetImage
+from .models import Member, Attendance, GetImage, Register
 from django.utils.safestring import mark_safe
 
 
@@ -29,3 +29,7 @@ class GetImageAdmin(admin.ModelAdmin):
         if GetImage.image:  # GetImage model 내에 첨부된 사진이 있다면
             return mark_safe(f'<img src="{GetImage.image.url}" style="width: 72px;" />')
         return None
+
+@admin.register(Register)
+class RegisterAdmin(admin.ModelAdmin):
+    list_display = ["id","name","gender","birth","phone_number","email","address","register_at","funnels"]

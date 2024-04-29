@@ -1,9 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
-from .models import Attendance, Member, GetImage
+from django.shortcuts import render, redirect
+from .models import Attendance, Member, GetImage, Register
 from django.contrib.auth.models import User
 import matplotlib
+from django.utils import timezone
 
 matplotlib.use("Agg")
 
@@ -171,3 +172,22 @@ def ApiAttendanceModify(request):
                 "poko_image": poko_image,
             },
         )
+
+
+def RegisterForm(request):
+    return render(request,"checking/register.html",{})
+
+def ApiRegister(request):
+    if request.method == "POST":
+        new_register = Register()
+        new_register.name = request.POST['name']
+        new_register.gender = request.POST['gender']
+        new_register.birth = request.POST['birth']
+        new_register.phone_number = request.POST['phone_number']
+        new_register.email = request.POST['email']
+        new_register.address = request.POST['address']
+        new_register.register_at = timezone.now()
+        new_register.funnels = request.POST['funnels']
+        new_register.save()
+
+    return redirect("/")

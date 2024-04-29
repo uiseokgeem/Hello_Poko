@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.validators import RegexValidator
 
 class Member(models.Model):
     teacher = models.ForeignKey(
@@ -35,6 +35,25 @@ class GetImage(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(blank=True)  # upload_to="checking/getimage/%Y/%m/%d"
     description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+class Register(models.Model):
+    name = models.CharField(verbose_name = '이름',max_length=10)
+    GENDERS = (
+        ('M','남성'),
+        ('F','여성')
+    )
+    gender = models.CharField(verbose_name = '성별',max_length=2, choices = GENDERS)
+    birth = models.DateField(verbose_name="생년월일")
+    #휴대폰 정규식
+    phone_regex = RegexValidator(regex = r'^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$')
+    phone_number = models.CharField(validators=[phone_regex], max_length=13, unique=True)
+    email = models.EmailField(verbose_name="이메일", max_length=128, unique=True)
+    address = models.TextField(verbose_name="주소지")
+    register_at = models.DateField(verbose_name="신청 날짜")
+    funnels = models.TextField(verbose_name="접하게 된 경로")
 
     def __str__(self):
         return self.name
