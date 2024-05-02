@@ -94,7 +94,7 @@ def ApiGraph6week(request):
     # SVG 문자열을 가져와서 전달
     graph_6w = imgdata.getvalue()
 
-    # information에 표시할 내용
+    # information 출력 내용
 
     # 제적인원 구하기
     names_list = Member.objects.all().values_list("name", flat=True)
@@ -121,25 +121,54 @@ def ApiGraph6week(request):
 
 
 def ApiGraphRatiobyClass(request):
-    # 퍼센티지 계산에 필요한 attendance, absent + teacher,name 데이터 확보
+    # 퍼센티지 계산에 필요한 attendance, absent + teacher_name 데이터 확보
     attendance_data = Member.objects.all()
-    # print("확인 입니다.", attendance_data[0].teacher, attendance_data[0].name)
 
     # 데이터 프레임 만들기
-    attendance_df = pd.DataFrame(columns=["teacher", "name", "attendance", "absent"])
+    attendance_df = pd.DataFrame(columns=["name", "attendance", "absent"])
+
     for i in range(len(attendance_data)):
         attendance_dict = {
-            "teacher": str(attendance_data[i].teacher),
+            "teacher_id": attendance_data[i].teacher_id,
             "name": attendance_data[i].name,
-            "attendance": attendance_data[i].attendance,
-            "absent": attendance_data[i].absent,
+            "attendance": attendance_data[i].attendance_count,
+            "absent": attendance_data[i].absent_count,
         }
         attendance_df = attendance_df._append(attendance_dict, ignore_index=True)
 
+    print("수정확인", attendance_df)
+
+    # user model 테이블 생성
+
+    users = User.objects.all()  # User모델에서 그래프에 반영할 teacher_name 생성
+    user_df = pd.DataFrame(columns=["teacher_id", "teacher_name"])
+
+    for user in users:
+        user_info = [
+            user.username,
+            user.first_name + user.last_name,
+        ]
+        user_df = user_df._append(
+            pd.Series(user_info, index=user_df.columns), ignore_index=True
+        )
+
+    print("user_df 확인", user_df)
+
+    df = pd.merge(
+        attendance_df, user_df, on="teacher_id", how="left"
+    )  # teacher_id 기준으로 merge
+
+    print("확인", df)
+
     # 데이터 프레임 연산을 통해 전체 출결횟수 합기준 출석률과 결석률 계산
     attendance_sum = (
-        attendance_df.groupby("teacher")[["attendance", "absent"]].sum().reset_index()
+        attendance_df.groupby("teacher_id")[["attendance", "absent"]]
+        .sum()
+        .reset_index()
     )  # attendance 횟수와 absent 횟수 각각 총합 계산
+
+    print("attendance_sum, 확인", attendance_sum)
+
     attendance_sum["total"] = (
         attendance_sum["attendance"] + attendance_sum["absent"]
     )  # 전체 출결횟수 = attendance 횟수 총합 + absent  횟수 총합
@@ -152,10 +181,12 @@ def ApiGraphRatiobyClass(request):
     attendance_sum["absent_ratio"] = attendance_sum["absent"] / attendance_sum["total"]
 
     attendance_grouped = (
-        attendance_sum.groupby("teacher")[["attendance_ratio", "absent_ratio"]]
+        attendance_sum.groupby("teacher_id")[["attendance_ratio", "absent_ratio"]]
         .sum()
         .reset_index()
     )
+
+    # user_df를 통해 teacher_id로 teacher_name 생성 후 그래프 생성
 
     ## 폰트 설정
     path = "./static/AppleGothic.ttf"
@@ -167,7 +198,7 @@ def ApiGraphRatiobyClass(request):
 
     # 그래프 그리기
     ax = attendance_grouped.plot(
-        x="teacher",
+        x="teacher_id",
         kind="bar",
         color=["lightblue", "lightcoral"],
         figsize=(8, 4),
@@ -211,40 +242,36 @@ def ApiGraphWeekly(request, date):
     if request.method == "POST":
         date = request.POST.get("date", "")
 
-        # 데이터 프레임 만들기
-        users = User.objects.all()  # User모델에서 그래프에 반영할 teacher_name 생성
-        user_df = pd.DataFrame(columns=["teacher_id", "teacher_name"])
+        # models.py 수정후 새로운 ApiGraphWeekly 로직
+        users = User.objects.all()  #
 
-        # print("username 확인", users[0].username)
-
-        for user in users:
-            user_info = [
-                user.username,
-                user.first_name + user.last_name,
-            ]
-            user_df = user_df._append(
-                pd.Series(user_info, index=user_df.columns), ignore_index=True
+        AttendanceToTeacher = (
+            Attendance.objects.select_related("name__teacher")
+            .values(
+                "name__teacher__username",
+                "name__teacher__first_name",
+                "name__teacher__last_name",
+                "name__name",
+                "attendance",
+                "date",
             )
+            .filter(date__icontains=date)
+        ).order_by("attendance")
 
-        members = Member.objects.all()  # 학년정보 생성
-        member_df = pd.DataFrame(columns=["teacher_id", "grade_info"])
-        for member in members:
-            member_info = [member.teacher_id, member.grade + member.gender]
-            member_df = member_df._append(
-                pd.Series(member_info, index=member_df.columns), ignore_index=True
-            )
+        AttendanceToTeacher_df = pd.DataFrame(data=AttendanceToTeacher)
+        AttendanceToTeacher_df["teacher_name"] = (
+            AttendanceToTeacher_df["name__teacher__first_name"]
+            + AttendanceToTeacher_df["name__teacher__last_name"]
+        )
 
-        filter_date = Attendance.objects.filter(date__icontains=date)
-        date_df = pd.DataFrame(data=filter_date.values())
+        print("AttendanceToTeacher_df 확인", AttendanceToTeacher_df)
 
-        df = pd.merge(
-            date_df, user_df, on="teacher_id", how="left"
-        )  # teacher_id 기준으로 merge
-
+        # 출석/결석 2개의 값을 보여주기 위해 groupby 사용한 후 unstack으로 데이터프레임으로 전환
         result = (
-            df.groupby(["teacher_name", "attendance"]).size().unstack()
-        )  # 출석/결석 2개의 값을 보여주기 위해 groupby 사용한 후 unstack으로 데이터프레임으로 전환
-
+            AttendanceToTeacher_df.groupby(["teacher_name", "attendance"])
+            .size()
+            .unstack()
+        )
         result = result[["결석", "출석"]]  # 그래프 가독성을 위한 순서 바꾸기
 
         ## 폰트 설정, 적용되는지 확인 필요
@@ -306,7 +333,8 @@ def ApiGraphWeekly(request, date):
         graph_weekly = imgdata.getvalue()
         plt.close()
 
-        #######################출결 결과 요약##########################
+        # information 출력 내용
+
         # 조회한 주의 출석 총인원 수
         week_count = Attendance.objects.filter(date__icontains=date)
         week_count_df = pd.DataFrame(list(week_count.values()))
@@ -320,13 +348,9 @@ def ApiGraphWeekly(request, date):
         present_count = week_count_df[week_count_df["attendance"] == "출석"][
             "count"
         ].values[0]
-        # 리스트로 반환됨, [0]지정 필수
 
         # 조회한 주의 이름 출석결석 table tab 표기
-        tabel_student = Attendance.objects.filter(date__icontains=date).order_by(
-            "attendance"
-        )
-        tabel_teacher = list(user_df["teacher_name"].values)  # Teacher.objects.all()
+        tabel_teacher = list(AttendanceToTeacher_df["teacher_name"].values)
         year, month, day = date.split("-")
 
         # 알림창 내용
@@ -335,7 +359,7 @@ def ApiGraphWeekly(request, date):
 
         return (
             graph_weekly,
-            tabel_student,
+            AttendanceToTeacher,
             tabel_teacher,
             count_text5,
             count_text6,

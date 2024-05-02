@@ -192,9 +192,9 @@
                                     </thead>
                                     <tbody>
                                     {% for student in tabel_student %}
-                                        {% if user.username == student.teacher_id %}
+                                        {% if user.username == student.name__teacher__username %}
                                             <tr>
-                                                <td>{{ student.name }}</td>
+                                                <td>{{ student.name__name }}</td>
                                                 {% if student.attendance == '결석' %}
                                                     <td style="color:#F08080;">{{ student.attendance }}</td>
                                                 {% else %}
