@@ -1,6 +1,8 @@
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
-from checking.models import GetImage
+from checking.models import GetImage, Member
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 # Graph
 from graph.views import ApiGraph6week as graph_6week
@@ -62,3 +64,33 @@ def index_common(request):  # dashboard
                 "date": date,
             },
         )
+
+def RegisterForm(request):
+    teachers = (
+        User.objects.all()
+        )
+    return render(request, "common/register.html", {"teachers" : teachers})
+
+def ApiRegister(request):
+    if request.method == "POST":
+    #     try :
+    #         user = User.objects.get(username="임시선생님")
+    #     except User.DoesNotExist:
+    #         user = User.objects.create_user(username="임시선생님",password="dlatltjstodsla") #비번 임시선생님
+    #         user.save()
+
+        new_register = Member()
+        # new_register.teacher = user
+        teacher_name = request.POST.get('teacher')
+        print(teacher_name)
+        teacher = User.objects.get(username=teacher_name)
+        new_register.teacher = teacher
+        new_register.name = request.POST['name']
+        new_register.grade = request.POST['grade']
+        new_register.gender = request.POST['gender']
+        new_register.save()
+
+    return redirect("/")
+
+def ApiError(request):
+    return render(request, "common/error.html", {})

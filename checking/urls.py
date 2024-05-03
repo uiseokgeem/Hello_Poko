@@ -13,6 +13,4 @@ urlpatterns = [
     # path("ind/", views.attendance_ind),
     path("check_modi/", views.ApiAttendanceModify),
     # path("download_excel/", views.result_excel, name="download_excel"),
-    path("register/", views.RegisterForm),
-    # path("register/create/", views.ApiRegister,name='ApiRegister')
 ]

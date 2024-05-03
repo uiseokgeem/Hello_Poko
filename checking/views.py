@@ -174,10 +174,6 @@ def ApiAttendanceModify(request):
         )
 
 
-def RegisterForm(request):
-    return render(request, "checking/register.html", {})
-
-
 # def ApiRegister(request):
 #     if request.method == "POST":
 #         new_register = Register()

@@ -12,4 +12,7 @@ urlpatterns = [
         name="login",
     ),
     path("logout/", views.logout_view, name="logout"),
+    path("register/", views.RegisterForm),
+    path("register/create/", views.ApiRegister, name='ApiRegister')
+
 ]
