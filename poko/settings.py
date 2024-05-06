@@ -71,7 +71,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "common.middleware.LoginRequiredMiddleware",
+    # "common.middleware.LoginRequiredMiddleware",
 ]
 
 ROOT_URLCONF = "poko.urls"

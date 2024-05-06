@@ -1,10 +1,10 @@
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+from common.forms import UserForm
 from checking.models import GetImage
 
 # Graph
 from graph.views import ApiGraph6week as graph_6week
-from graph.views import ApiGraphRatiobyClass as graph_ratiobyclass
 from graph.views import ApiGraphWeekly as graph_weekly
 
 
@@ -62,3 +62,22 @@ def index_common(request):  # dashboard
                 "date": date,
             },
         )
+
+
+def signup(request):
+    print("회원가입 작동확인")
+    if request.method == "POST":
+        print("POST 요청 확인")
+        form = UserForm(request.POST)
+        if form.is_valid():
+            print("회원가입 작성 내용")
+            form.save()
+            username = form.cleaned_data["username"]
+            raw_password = form.cleaned_data["password1"]
+            user = authenticate(user=username, password=raw_password)
+            login(request, user)
+            return redirect("common:index_common")
+    else:
+        print("회원가입 실패")
+        form = UserForm()
+        return render(request, "common/signup.html", {"form": form})
