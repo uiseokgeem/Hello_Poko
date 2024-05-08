@@ -103,24 +103,15 @@ def ApiError(request):
     return render(request, "common/error.html", {})
 
 
-def signup(request):
-    print("회원가입 작동확인")
+def ApiSignup(request):
     if request.method == "POST":
-        print("POST 요청 확인")
         form = UserForm(request.POST)
-        print("from 생성 확인")
         if form.is_valid():
-            print("회원가입 작성 중")
             form.save()
             username = form.cleaned_data["username"]
-            print("username 확인", username)
             raw_password1 = form.cleaned_data["password1"]
             raw_password2 = form.cleaned_data["password2"]
-            email = form.cleaned_data["email"]
-            print("raw_password1 확인", raw_password1)
-            print("raw_password2 확인", raw_password2)
-            print("회원가입 작성 완료")
-
+            print("ApiSignup Complete!", username, raw_password1)
             return redirect("common:login")
 
             # user = authenticate(
@@ -129,11 +120,8 @@ def signup(request):
             # )
             # 문제 : 사용자 인증(authenticate)에서 none을 반환
             # authenticate가 기존에 있던 uiseok의 아이디와 비밀번호로도 인증하지 못함
-
             # 회원 가입만 처리하고 로그인은 사용자가 직접하는 방법 고려 화요일까지 -> 완료
 
-            # print("authenticate 완료")
-            # print("user type확인", type(user), user)
             # if user is not None:
             #     print("user is not none!")
             #     login(request, user)
