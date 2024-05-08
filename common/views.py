@@ -7,6 +7,12 @@ from checking.models import GetImage
 from graph.views import ApiGraph6week as graph_6week
 from graph.views import ApiGraphWeekly as graph_weekly
 
+# Authenticate
+from django.contrib.auth.hashers import make_password
+
+raw_password = "user_password"
+hashed_password = make_password(raw_password)
+
 
 def logout_view(request):
     logout(request)
@@ -69,14 +75,36 @@ def signup(request):
     if request.method == "POST":
         print("POST 요청 확인")
         form = UserForm(request.POST)
+        print("from 생성 확인")
         if form.is_valid():
-            print("회원가입 작성 내용")
+            print("회원가입 작성 중")
             form.save()
             username = form.cleaned_data["username"]
-            raw_password = form.cleaned_data["password1"]
-            user = authenticate(user=username, password=raw_password)
-            login(request, user)
-            return redirect("common:index_common")
+            print("username 확인", username)
+            raw_password1 = form.cleaned_data["password1"]
+            raw_password2 = form.cleaned_data["password2"]
+            email = form.cleaned_data["email"]
+            print("raw_password1 확인", raw_password1)
+            print("raw_password2 확인", raw_password2)
+            print("회원가입 작성 완료")
+
+            return redirect("common:login")
+
+            # user = authenticate(
+            #     user=username,
+            #     password=raw_password1,
+            # )
+            # 문제 : 사용자 인증(authenticate)에서 none을 반환
+            # authenticate가 기존에 있던 uiseok의 아이디와 비밀번호로도 인증하지 못함
+
+            # 회원 가입만 처리하고 로그인은 사용자가 직접하는 방법 고려 화요일까지 -> 완료
+
+            # print("authenticate 완료")
+            # print("user type확인", type(user), user)
+            # if user is not None:
+            #     print("user is not none!")
+            #     login(request, user)
+
     else:
         print("회원가입 실패")
         form = UserForm()
