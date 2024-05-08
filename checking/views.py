@@ -52,7 +52,7 @@ def ApiAttendanceList(request):
         return HttpResponse("잘못된 접근입니다.")
 
 
-def ApiAttendanceChecking(request):
+def ApiAttendanceChecking(request):  # 수정완료-태욱님
     # 출석체크 여부 확인
     if request.method == "POST" and request.user.is_authenticated:
         checked_name = request.POST["name"]
