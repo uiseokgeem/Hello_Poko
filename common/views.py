@@ -96,7 +96,6 @@ def ApiRegister(request):
         new_register.grade = request.POST["grade"]
         new_register.gender = request.POST["gender"]
         new_register.save()
-
     return redirect("/")
 
 
