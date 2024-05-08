@@ -13,6 +13,7 @@ urlpatterns = [
     ),
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.RegisterForm),
-    path("register/create/", views.ApiRegister, name='ApiRegister')
+    path("register/create/", views.ApiRegister, name='ApiRegister'),
+    path("error/", views.ApiError, name = "ApiError" )
 
 ]

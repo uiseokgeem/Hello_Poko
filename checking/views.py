@@ -77,15 +77,16 @@ def ApiAttendanceChecking(request):
 
         # 출석 입력이 없다면 form 입력값 가져오기
         user_name = request.user.username
-        teacher = User.objects.get(username=user_name)  # 외래키 필드의 값은 객체 상태로 저장한다.
-        name = request.POST["name"]
+        # teacher = User.objects.get(username=user_name)  # 외래키 필드의 값은 객체 상태로 저장한다.
+        member_str = request.POST["name"]
+        member = Member.objects.get(name=member_str)
         date = request.POST["date"]
         attendance = request.POST["attendance"]
 
         # form 입력값을 Attendance의 각 필드에 저장
         attendance = Attendance.objects.create(
-            teacher=teacher,
-            name=name,
+            # teacher=teacher,
+            name=member,
             date=date,
             attendance=attendance,
         )
@@ -101,10 +102,10 @@ def ApiAttendanceChecking(request):
         # 츨석결과를 Member의 attendance에  출결 횟수 저장
         name = request.POST.get("name", "")
         member_info = get_object_or_404(Member, name=name)
-        if attendance.attendance == "출석":
+        if member_info.attendance == "출석":
             member_info.attendance += 1
 
-        elif attendance.attendance == "결석":
+        elif member_info.attendance == "결석":
             member_info.absent += 1
 
         member_info.save()

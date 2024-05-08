@@ -78,18 +78,24 @@ def ApiRegister(request):
     #     except User.DoesNotExist:
     #         user = User.objects.create_user(username="임시선생님",password="dlatltjstodsla") #비번 임시선생님
     #         user.save()
-
+        teachers = (
+        User.objects.all()
+        )
         new_register = Member()
         # new_register.teacher = user
         teacher_name = request.POST.get('teacher')
-        print(teacher_name)
         teacher = User.objects.get(username=teacher_name)
         new_register.teacher = teacher
-        new_register.name = request.POST['name']
-        new_register.grade = request.POST['grade']
-        new_register.gender = request.POST['gender']
-        new_register.save()
-
+        name = request.POST.get('name')
+        if Member.objects.filter(name=name).exists():
+            error_message = "이미 존재하는 이름입니다. 다른 이름을 선택해 주세요."
+            return render(request, 'common/register.html', {"teachers" : teachers, "error_message" : error_message})
+        else:
+            new_register.name = name
+            new_register.grade = request.POST['grade']
+            new_register.gender = request.POST['gender']
+            new_register.save()
+            return redirect('/')
     return redirect("/")
 
 def ApiError(request):

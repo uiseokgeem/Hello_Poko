@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="container-fluid">
-        <form action = "/common/register/create/" method="POST" onsubmit="showAlert()">
+        <form action = "/common/register/create/" method="POST">
             {% csrf_token %}
 
             <!-- 이름 -->
@@ -18,6 +18,12 @@
                 <input class="form-control" id="name" name="name">
                 <label for="name">이름</label>
             </div>
+
+          {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+              {{ error_message }}
+            </div>
+          {% endif %}
 
             <!-- 선생님 -->
             <select class="form-select form-select-sm" aria-label="Small select example" name="teacher">
@@ -66,20 +72,9 @@
       </div>
 
       <button class="btn btn-primary" type="submit" value="submit">등록</button>
+
     </form>
-    <script>
-      function showAlert() {
 
-        try{
-          var name = document.getElementById('name').value;
-          alert("등록되었습니다.");
-        }
-        catch (error) {
-            console.error("오류가 발생했습니다:", error);
-        }
-
-      }
-    </script>
     </div>
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
