@@ -9,32 +9,24 @@ from django.utils import timezone
 matplotlib.use("Agg")
 
 
-def index(request):
-    poko_image = GetImage.objects.get(pk=2).image.url
-    return render(request, "checking/index.html", {"poko_image": poko_image})
-
-
-def index_detail(request):
-    poko_image = GetImage.objects.get(pk=2).image.url
-    return render(request, "checking/index_detail.html", {"poko_image": poko_image})
+def index_attendance(request):
+    return render(request, "checking/index_attendance.html")
 
 
 def ApiAttendanceProduce(request):
     if request.user.is_authenticated:
         teacher_name = request.user.first_name + request.user.last_name
-        # print(teacher_name)
-        poko_image = GetImage.objects.get(pk=3).image.url
         return render(
             request,
             "checking/attendance_produce.html",
-            context={"poko_image": poko_image, "teacher_name": teacher_name},
+            context={"teacher_name": teacher_name},
         )
 
 
 def ApiAttendanceList(request):
     if request.method == "POST" and request.user.is_authenticated:
         date = request.POST.get("date", "")
-        user_name = request.user.username  # 로그인 정보를 통해 선생님 이름 가져오기
+        user_name = request.user.username
 
         user_students = (
             Member.objects.all()
@@ -103,10 +95,10 @@ def ApiAttendanceChecking(request):  # 수정완료-태욱님
         name = request.POST.get("name", "")
         member_info = get_object_or_404(Member, name=name)
         if member_info.attendance == "출석":
-            member_info.attendance += 1
+            member_info.attendance_count += 1
 
         elif member_info.attendance == "결석":
-            member_info.absent += 1
+            member_info.absent_count += 1
 
         member_info.save()
         attendance.save()

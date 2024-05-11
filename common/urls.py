@@ -14,6 +14,6 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.RegisterForm),
     path("register/create/", views.ApiRegister, name="ApiRegister"),
-    path("signup/", views.signup, name="signup"),
+    path("signup/", views.ApiSignup, name="ApiSignup"),
     path("error/", views.ApiError, name="ApiError"),
 ]
