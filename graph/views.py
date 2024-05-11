@@ -109,12 +109,10 @@ def ApiGraph6week(request):
     presunday_month, presunday_day = presunday_text.split("-")
     print(presunday_text, year, month, day)
 
-    count_text1 = (
-        f" 지난 {year}년 {presunday_month}월 {presunday_day}일 주일 기준 6주간 출석 현황 입니다."
-    )
-    count_text2 = f"오늘 {year}년 {month}월 {day}일 기준 제적 총 {names_count}명으로"
+    count_text1 = f" {year}년 {presunday_month}월 {presunday_day}일 주일 기준 6주간 출석 현황 입니다."
+    count_text2 = f"{year}년 {month}월 {day}일 기준 제적 총 {names_count}명으로"
     count_text3 = (
-        f"{presunday_month}월 {presunday_day}일 주일 예배 출석 인원은 총 {attendance_value}명 입니다."
+        f"{presunday_month}월 {presunday_day}일 주일 출석은 총 {attendance_value}명 입니다."
     )
 
     return graph_6w, count_text1, count_text2, count_text3

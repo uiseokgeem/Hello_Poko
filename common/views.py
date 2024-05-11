@@ -1,20 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-from checking.models import GetImage, Member
+from checking.models import Member
 from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
 from common.forms import UserForm
-from checking.models import GetImage
 
 # Graph
 from graph.views import ApiGraph6week as graph_6week
 from graph.views import ApiGraphWeekly as graph_weekly
-
-# Authenticate
-from django.contrib.auth.hashers import make_password
-
-raw_password = "user_password"
-hashed_password = make_password(raw_password)
 
 
 def logout_view(request):
@@ -24,14 +16,12 @@ def logout_view(request):
 
 def index_common(request):  # dashboard
     if request.method == "GET" and request.user.is_authenticated:
-        poko_image = GetImage.objects.get(pk=1).image.url
         graph_6w, count_text1, count_text2, count_text3 = graph_6week(request)
 
         return render(
             request,
             "common/index_common.html",
             context={
-                "poko_image": poko_image,
                 "graph_6w": graph_6w,
                 "count_text1": count_text1,
                 "count_text2": count_text2,
@@ -41,8 +31,6 @@ def index_common(request):  # dashboard
 
     if request.method == "POST" and request.user.is_authenticated:
         date = request.POST.get("date", "")
-
-        poko_image = GetImage.objects.get(pk=1).image.url
         graph_6w, count_text1, count_text2, count_text3 = graph_6week(request)
         (
             graph_week,
@@ -57,7 +45,6 @@ def index_common(request):  # dashboard
             request,
             "common/index_common.html",
             context={
-                "poko_image": poko_image,
                 "graph_6w": graph_6w,
                 "count_text1": count_text1,
                 "count_text2": count_text2,

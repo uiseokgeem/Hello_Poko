@@ -10,12 +10,13 @@ class LoginRequiredMiddleware:
         if not request.user.is_authenticated:
             if not request.path.startswith(reverse("common:login")):
                 if (
-                    request.path == reverse("common:Apisignup")
+                    request.path == reverse("common:ApiSignup")
                     and request.method == "GET"
-                ):  # 비인증 회원가입 작성인 경우
+                ):  # 비인증 회원가입
+                    print("비인증 회원가입작성-정상")
                     return render(request, "common/signup.html")
                 elif (
-                    request.path == reverse("common:Apisignup")
+                    request.path == reverse("common:ApiSignup")
                     and request.method == "POST"
                 ):  # 비인증 회원가입 작성 후인 경우
                     pass  # 바로 이동하게 하면 되는 것이었다!
