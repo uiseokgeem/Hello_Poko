@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from checking.models import GetImage, Member
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 
 # Graph
 from graph.views import ApiGraph6week as graph_6week
@@ -66,30 +67,30 @@ def index_common(request):  # dashboard
         )
 
 def RegisterForm(request):
-    teachers = (
-        User.objects.all()
-        )
-    return render(request, "common/register.html", {"teachers" : teachers})
+    teacher_name = request.user.username
+    teachers = User.objects.all().exclude(username = teacher_name)
+
+    members = Member.objects.filter(teacher=teacher_name)
+    return render(request, "common/register.html",{"teachers" : teachers, "members" : members})
 
 def ApiRegister(request):
-    if request.method == "POST":
+    if request.method == "POST" and request.user.is_authenticated:
     #     try :
     #         user = User.objects.get(username="임시선생님")
     #     except User.DoesNotExist:
     #         user = User.objects.create_user(username="임시선생님",password="dlatltjstodsla") #비번 임시선생님
     #         user.save()
-        teachers = (
-        User.objects.all()
-        )
         new_register = Member()
         # new_register.teacher = user
-        teacher_name = request.POST.get('teacher')
+        # teacher_name = request.POST.get('teacher')
+        # teacher = User.objects.get(username=teacher_name)
+        teacher_name = request.user.username
         teacher = User.objects.get(username=teacher_name)
         new_register.teacher = teacher
         name = request.POST.get('name')
         if Member.objects.filter(name=name).exists():
             error_message = "이미 존재하는 이름입니다. 다른 이름을 선택해 주세요."
-            return render(request, 'common/register.html', {"teachers" : teachers, "error_message" : error_message})
+            return render(request, 'common/register.html', {"error_message" : error_message})
         else:
             new_register.name = name
             new_register.grade = request.POST['grade']
@@ -98,5 +99,16 @@ def ApiRegister(request):
             return redirect('/')
     return redirect("/")
 
+def ApiClimb(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        member_id = request.POST.get('member_id')
+        selected_teacher_id = request.POST.get('teacher_id')
+
+        member = Member.objects.get(pk=member_id)
+        # member = get_object_or_404(Member, pk=member_id)
+        member.teacher = User.objects.get(pk = selected_teacher_id)
+        member.save()
+
+        return redirect("/")
 def ApiError(request):
     return render(request, "common/error.html", {})
