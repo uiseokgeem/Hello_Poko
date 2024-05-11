@@ -21,7 +21,10 @@ class Member(models.Model):
 
 class Attendance(models.Model):
     name = models.ForeignKey(
-        Member, on_delete=models.CASCADE, related_name="attendance", to_field="name"
+        to="Member",
+        on_delete=models.CASCADE,
+        related_name="attendance",
+        to_field="name",
     )
     attendance = models.CharField(max_length=50)
     date = models.DateTimeField()

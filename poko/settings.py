@@ -54,11 +54,11 @@ INSTALLED_APPS = [
     "checking",
     "common",
     "graph",
-    "django.contrib.sites",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
+    # "django.contrib.sites",
+    # "allauth",
+    # "allauth.account",
+    # "allauth.socialaccount",
+    # "allauth.socialaccount.providers.google",
 ]
 
 MIDDLEWARE = [
@@ -162,17 +162,15 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 AUTH_USER_MODEL = "auth.User"
 
-# Django-allauth
-
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
+    # "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-SITE_ID = 1
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
+# 인증 allauth 사용 시 옵션
+# SITE_ID = 1
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_VERIFICATION = "none"
 
 # 배포시 설정(csrf토큰 설정), 개발환경에서는 admin login issue로 사용하지 말 것
 CSRF_TRUSTED_ORIGINS = ["https://www.poko-dev.com", "https://poko-dev.com"]
@@ -183,4 +181,4 @@ SESSION_COOKIE_SECURE = True
 LOGIN_REDIRECT_URL = "/"
 
 # middleware login 인증이 아닌 경우 이동하는 URL
-LOGIN_URL = "/"
+LOGIN_URL = "login/"
