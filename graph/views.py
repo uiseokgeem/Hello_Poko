@@ -365,25 +365,24 @@ def ApiGraphWeekly(request, date):
         )
 
 
-def ApiGraphIndividual(request, teacher):
-    query = request.POST["q_ind"]
-    request.session["q_ind"] = query  # 선생님 이름
+def ApiGraphIndividual(request):
+    if request.user.is_authenticated:
+        teacher_name = request.user
 
-    teacher = Teacher.objects.filter(teacher_name=query)
-    teacher_id = teacher.values("id")[0]["id"]
-
-    inv_rate = Member.objects.filter(teacher_id=teacher_id).values()
+    inv_rate = Member.objects.filter(teacher=teacher_name).values()
     inv_rate_df = pd.DataFrame(data=inv_rate)
 
     # 데이터 프레임 연산을 통해 전체 출결일수합기준 출석률과 결석률 계산
     df_sum = (
-        inv_rate_df.groupby("name")[["attendance", "absent"]].sum().reset_index()
+        inv_rate_df.groupby("name")[["attendance_count", "absent_count"]]
+        .sum()
+        .reset_index()
     )  # attendance 횟수와 absent 횟수 각각 총합 계산
-    df_sum["total"] = df_sum["attendance"] + df_sum["absent"]
+    df_sum["total"] = df_sum["attendance_count"] + df_sum["absent_count"]
 
     # 전체 출결일수에서 attendance 횟수와 absent 횟수의 비율을 계산 및 attendance_ratio, absent_ratio 컬럼 추가
-    df_sum["attendance_ratio"] = df_sum["attendance"] / df_sum["total"]
-    df_sum["absent_ratio"] = df_sum["absent"] / df_sum["total"]
+    df_sum["attendance_ratio"] = df_sum["attendance_count"] / df_sum["total"]
+    df_sum["absent_ratio"] = df_sum["absent_count"] / df_sum["total"]
 
     df_grouped = (
         df_sum.groupby("name")[["attendance_ratio", "absent_ratio"]].sum().reset_index()
@@ -435,37 +434,46 @@ def ApiGraphIndividual(request, teacher):
     graph_ind = imgdata.getvalue()
 
     #######################################################
+
     # 전체기간 개인 날짜별 출결 현황 table tab 표기
-    table_data = Attendance.objects.filter(teacher_name__icontains=query).order_by(
-        "-date"
+    table_data = (
+        Attendance.objects.select_related("name__teacher")
+        .values(
+            "name__teacher__username",
+            "name__name",
+            "attendance",
+            "date",
+        )
+        .filter(name__teacher__username=teacher_name)
+        .order_by("-date")
     )
-    teacher_data = Teacher.objects.filter(teacher_name__icontains=query)
-    teacher_key = str(teacher_data.values("id")[0]["id"])
-    print("유형 확인", type(teacher_data))
-    print("문자열로 변환된 teacher_key:", type(teacher_key))
-    table_student = Member.objects.filter(teacher=teacher_key)
 
-    # 개인별 출결일 결과 텍스트 생성
-    inv_date = Attendance.objects.filter(teacher_name=query)
-    inv_date_df = pd.DataFrame(data=inv_date.values())
-    result = inv_date_df.groupby(["name", "date"])["attendance"].max().unstack()
+    inv_date_df = pd.DataFrame(data=table_data.values())
+    print(inv_date_df)
 
+    table_student = Member.objects.filter(teacher=teacher_name)
+    result = inv_date_df.groupby(["name_id", "date"])["attendance"].max().unstack()
     result.columns = pd.to_datetime(result.columns).strftime("%m-%d")
 
     index_values = result.index
     columns_names = result.columns
 
+    print(result)
     print("Index values:", index_values)
     print("Column names:", columns_names)
 
+    # 개인별 출결일 결과 텍스트 생성
+    # inv_date = Attendance.objects.filter(teacher_name=query)
+    # inv_date_df = pd.DataFrame(data=inv_date.values())
+
     # result["date"] = pd.to_datetime(result["date"])
     # result["date"] = result["date"].dt.strftime("%m-%d")
+    #
+    # # request.session["result_df"] = result.to_json()  # 엑셀 다운로드에 필요한 result
+    # # print(inv_date_df)
+    # print(result)
 
-    request.session["result_df"] = result.to_json()  # 엑셀 다운로드에 필요한 result
-    # print(inv_date_df)
-    print(result)
-
-    return graph_ind
+    return graph_ind, result
 
 
 def ApiResultExcel(request):

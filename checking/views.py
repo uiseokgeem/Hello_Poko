@@ -7,10 +7,19 @@ import matplotlib
 from django.utils import timezone
 
 matplotlib.use("Agg")
+from graph.views import ApiGraphIndividual as graph_individual
 
 
 def index_attendance(request):
-    return render(request, "checking/index_attendance.html")
+    graph_ind, result = graph_individual(request)
+    return render(
+        request,
+        "checking/index_attendance.html",
+        context={
+            "graph_ind": graph_ind,
+            "result": result,
+        },
+    )
 
 
 def ApiAttendanceProduce(request):

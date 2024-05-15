@@ -8,23 +8,55 @@
 </head>
 
 <body>
+{% include 'common/navigation_bar.html' %}
 
 <div class="container">
-    <h2>개인별 출석/결석 비율 그래프 및 날짜별 출석 일 확인(tab)</h2>
-    <div class="row">
-        <div class="card">
-            <h4 class="card-header">Attendance</h4>
-            <div class="card-body">
-                <h6 class="card-title">{{ count_text1 }}</h6>
-                <p class="card-text">
-                </p>
-                <a href="/checking/produce/" class="btn btn-primary">Check Attendance</a>
-                <a href="/register/" class="btn btn-primary" role="button">New Student</a>
-            </div>
-        </div>
+    <div class="row my-5">
+        <h3>{{ request.user.first_name }}{{ request.user.last_name }} 선생님 안녕하세요!</h3>
+        {{ graph_ind | safe }}
     </div>
 </div>
 
+<div class="container" >
+
+  <div class="row align-items-start my-5">
+    <div class="col">
+      <h4>출석 현황</h4>
+    </div>
+    <div class="col">
+        <a href="/checking/produce/" class="btn btn-outline-primary">Check Attendance</a>
+    </div>
+    <div class="col">
+      <a href="/register/" class="btn btn-outline-primary" role="button">New Student</a>
+    </div>
+
+    <div class="row my-4">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                {% for col in result.columns %}
+                <th scope="col">{{ col }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {%  for index, row in result.iterrows %}
+            <tr>
+                <th scope="row">{{ index }}</th>
+                {% for cell in row %}
+                    {% if cell == '결석' %}
+                        <td style="color:#F08080;">{{ cell }}</td>
+                    {% else %}
+                        <td>{{ cell }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
 </body>
 
 <!-- 부트스트랩 및 팝퍼, 제이쿼리 CDN 추가 -->
