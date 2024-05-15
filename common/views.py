@@ -108,8 +108,7 @@ def ApiClimb(request):
         # member = get_object_or_404(Member, pk=member_id)
         member.teacher = User.objects.get(pk=selected_teacher_id)
         member.save()
-
-        return redirect("/")
+        return redirect("/register/")
     teachers = User.objects.all()
     return render(request, "common/register.html", {"teachers": teachers})
 
@@ -140,7 +139,10 @@ def ApiSignup(request):
             # if user is not None:
             #     print("user is not none!")
             #     login(request, user)
-
+        else :
+            print("폼이 유효하지 않습니다.")
+            print(form.errors)
+            return render(request, 'common/signup.html', {'form': form})
     else:
         print("회원가입 실패")
         form = UserForm()
