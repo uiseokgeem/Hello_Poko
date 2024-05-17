@@ -1,8 +1,11 @@
 from . import views
 from django.urls import path
 
+
+app_name = "checking"
+
 urlpatterns = [
-    path("", views.index_attendance),
+    path("", views.index_attendance, name="index_attendance"),
     path("produce/", views.ApiAttendanceProduce),
     path("date/", views.ApiAttendanceList),
     path("check/", views.ApiAttendanceChecking),

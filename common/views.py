@@ -1,4 +1,6 @@
-from django.contrib.auth import authenticate, login, logout
+# login
+
+from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from checking.models import Member
 from django.contrib.auth.models import User
@@ -135,15 +137,19 @@ def ApiSignup(request):
             # 문제 : 사용자 인증(authenticate)에서 none을 반환
             # authenticate가 기존에 있던 uiseok의 아이디와 비밀번호로도 인증하지 못함
             # 회원 가입만 처리하고 로그인은 사용자가 직접하는 방법 고려 화요일까지 -> 완료
-
             # if user is not None:
             #     print("user is not none!")
             #     login(request, user)
-        else :
+
+        else:
             print("폼이 유효하지 않습니다.")
             print(form.errors)
-            return render(request, 'common/signup.html', {'form': form})
+            return render(request, "common/signup.html", {"form": form})
     else:
         print("회원가입 실패")
         form = UserForm()
         return render(request, "common/signup.html", {"form": form})
+
+
+def ApiUpdatePwd(request):
+    pass
