@@ -6,8 +6,9 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("common.urls")),  # 대시보드 연결에 사용하자!
-    path("checking/", include("checking.urls")),
     path("common/", include("common.urls")),
+    path("checking/", include("checking.urls")),
+    path("report/", include("report.urls")),
     # path("accounts/", include("allauth.urls"))
     # path("checking/", include("checking.urls")),
     # path("checking/date/", include("checking.urls")),

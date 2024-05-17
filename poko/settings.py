@@ -51,8 +51,9 @@ INSTALLED_APPS = [
     "django_extensions",
     "debug_toolbar",
     # local apps
-    "checking",
     "common",
+    "checking",
+    "report",
     "graph",
     # "django.contrib.sites",
     # "allauth",
