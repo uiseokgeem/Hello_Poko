@@ -17,15 +17,29 @@ class MemberCheck(models.Model):
 
 
 class UserCheck(models.Model):
+    worship_choice = [(1, "1부 예배"), (2, "2부 예배"), (3, "3부 예배"), (0, "불참")]
+    qt_choice = [(1, "1회"), (2, "2회"), (3, "3회"), (4, "4회"), (5, "5회"), (0, "0회")]
+
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="usercheck",
         to_field="username",
     )
-    worship = models.CharField(max_length=3, null=True, default=None)  # 예/아니오
+    worship = models.IntegerField(
+        max_length=3,
+        null=True,
+        default=None,
+        choices=worship_choice,
+    )
+    qt = models.IntegerField(
+        max_length=3,
+        null=True,
+        default=None,
+        choices=qt_choice,
+    )
     meeting = models.CharField(max_length=3, null=True, default=None)  # 예/아니오
-    qt = models.CharField(max_length=3, null=True, default=None)  # 01회
+
     pray_time = models.CharField(max_length=4, null=True, default=None)  # 001분
     pray_youth = models.CharField(
         max_length=300, null=True, default=None
