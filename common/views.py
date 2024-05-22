@@ -3,7 +3,7 @@ from .forms import CustomAuthenticationForm, PasswordResetForm
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -15,6 +15,7 @@ from common.forms import UserForm
 # Graph
 from graph.views import ApiGraph6week as graph_6week
 from graph.views import ApiGraphWeekly as graph_weekly
+from graph.views import ApiGraphIndividual as graph_individual
 
 
 class CustomLoginView(auth_views.LoginView):
@@ -29,7 +30,12 @@ class CustomLoginView(auth_views.LoginView):
             return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))
 
         auth_login(self.request, user)
-        return HttpResponseRedirect(self.get_success_url())
+        if user.username == "poko01" or user.username == "poko02":
+            return HttpResponseRedirect(reverse("common:ApiIndexManager"))
+
+        else:
+            return HttpResponseRedirect(reverse("common:ApiIndexUser"))
+            # return HttpResponseRedirect(self.get_success_url())
 
 
 def logout_view(request):
@@ -49,50 +55,76 @@ def ApiUpdatePwd(request):
             return redirect("common:login")
 
 
-def index_common(request):  # dashboard
-    if request.method == "GET" and request.user.is_authenticated:
-        graph_6w, count_text1, count_text2, count_text3 = graph_6week(request)
+def ApiIndexManager(request):  # dashboard
+    if (
+        request.user.is_authenticated
+        and request.user.username == "poko01"
+        or request.user.username == "poko02"
+    ):
+        if request.method == "GET":
+            graph_6w, count_text1, count_text2, count_text3 = graph_6week(request)
 
+            return render(
+                request,
+                "common/index_manager.html",
+                context={
+                    "graph_6w": graph_6w,
+                    "count_text1": count_text1,
+                    "count_text2": count_text2,
+                    "count_text3": count_text3,
+                },
+            )
+
+        if request.method == "POST":
+            date = request.POST.get("date", "")
+            graph_6w, count_text1, count_text2, count_text3 = graph_6week(request)
+            (
+                graph_week,
+                AttendanceToTeacher,
+                tabel_teacher,
+                count_text5,
+                count_text6,
+                users,
+            ) = graph_weekly(request, date)
+
+            return render(
+                request,
+                "common/index_manager.html",
+                context={
+                    "graph_6w": graph_6w,
+                    "count_text1": count_text1,
+                    "count_text2": count_text2,
+                    "count_text3": count_text3,
+                    "graph_week": graph_week,
+                    "tabel_student": AttendanceToTeacher,
+                    "tabel_teacher": tabel_teacher,
+                    "users": users,
+                    "count_text5": count_text5,
+                    "count_text6": count_text6,
+                    "date": date,
+                },
+            )
+    else:
+        return HttpResponse("관리자 페이지 입니다. 잘못된 접근 입니다.")
+
+
+def ApiIndexUser(request):
+    if not (
+        request.user.is_authenticated
+        and request.user.username == "poko01"
+        or request.user.username == "poko02"
+    ):
+        graph_ind, result = graph_individual(request)
         return render(
             request,
-            "common/index_common.html",
+            "common/index_user.html",
             context={
-                "graph_6w": graph_6w,
-                "count_text1": count_text1,
-                "count_text2": count_text2,
-                "count_text3": count_text3,
+                "graph_ind": graph_ind,
+                "result": result,
             },
         )
-
-    if request.method == "POST" and request.user.is_authenticated:
-        date = request.POST.get("date", "")
-        graph_6w, count_text1, count_text2, count_text3 = graph_6week(request)
-        (
-            graph_week,
-            AttendanceToTeacher,
-            tabel_teacher,
-            count_text5,
-            count_text6,
-            users,
-        ) = graph_weekly(request, date)
-
-        return render(
-            request,
-            "common/index_common.html",
-            context={
-                "graph_6w": graph_6w,
-                "count_text1": count_text1,
-                "count_text2": count_text2,
-                "count_text3": count_text3,
-                "graph_week": graph_week,
-                "tabel_student": AttendanceToTeacher,
-                "tabel_teacher": tabel_teacher,
-                "users": users,
-                "count_text5": count_text5,
-                "count_text6": count_text6,
-                "date": date,
-            },
-        )
+    else:
+        return HttpResponse("교사 페이지 입니다. 잘못된 접근 입니다.")
 
 
 def RegisterForm(request):

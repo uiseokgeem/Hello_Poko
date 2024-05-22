@@ -7,19 +7,6 @@ import matplotlib
 from django.utils import timezone
 
 matplotlib.use("Agg")
-from graph.views import ApiGraphIndividual as graph_individual
-
-
-def index_attendance(request):
-    graph_ind, result = graph_individual(request)
-    return render(
-        request,
-        "checking/index_attendance.html",
-        context={
-            "graph_ind": graph_ind,
-            "result": result,
-        },
-    )
 
 
 def ApiAttendanceProduce(request):
@@ -190,3 +177,16 @@ def ApiAttendanceModify(request):
 #         new_register.save()
 #
 #     return redirect("/")
+
+
+# 5월 22일 common으로 이동
+# def index_attendance(request):
+#     graph_ind, result = graph_individual(request)
+#     return render(
+#         request,
+#         "checking/index_user.html",
+#         context={
+#             "graph_ind": graph_ind,
+#             "result": result,
+#         },
+#     )

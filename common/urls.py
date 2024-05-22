@@ -7,7 +7,8 @@ from .views import CustomLoginView
 app_name = "common"
 
 urlpatterns = [
-    path("", views.index_common, name="index_common"),
+    path("manager/", views.ApiIndexManager, name="ApiIndexManager"),
+    path("user/", views.ApiIndexUser, name="ApiIndexUser"),
     path(
         "login/",
         CustomLoginView.as_view(template_name="common/login.html"),
@@ -20,6 +21,7 @@ urlpatterns = [
     path("register/climb/", views.ApiClimb),
     path("error/", views.ApiError, name="ApiError"),
     path("signup/", views.ApiSignup, name="ApiSignup"),
+    # 5월 22일 기준 사용하지 않는 url
     # path("register/update/{q.id}", views.ApiRegisterUpdate),
     # path(
     #     "update_pwd/",
