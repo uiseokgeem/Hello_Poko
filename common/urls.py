@@ -7,7 +7,7 @@ from .views import CustomLoginView
 app_name = "common"
 
 urlpatterns = [
-    path("", CustomLoginView.as_view(template_name="common/login.html"), name="login"),
+    path("", CustomLoginView.as_view(template_name="common/login.html")),
     path("manager/", views.ApiIndexManager, name="ApiIndexManager"),
     path("user/", views.ApiIndexUser, name="ApiIndexUser"),
     path(
