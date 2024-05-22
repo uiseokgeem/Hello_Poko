@@ -1,7 +1,13 @@
 # login
-
+from .forms import CustomAuthenticationForm, PasswordResetForm
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.urls import reverse
+
+
 from checking.models import Member
 from django.contrib.auth.models import User
 from common.forms import UserForm
@@ -11,9 +17,36 @@ from graph.views import ApiGraph6week as graph_6week
 from graph.views import ApiGraphWeekly as graph_weekly
 
 
+class CustomLoginView(auth_views.LoginView):
+    authentication_form = CustomAuthenticationForm
+    template_name = "common/login.html"
+
+    def form_valid(self, form):
+        user = form.get_user()
+
+        if user.check_password("poko0000!"):
+            # redirect와의 차이?
+            return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))
+
+        auth_login(self.request, user)
+        return HttpResponseRedirect(self.get_success_url())
+
+
 def logout_view(request):
     logout(request)
     return redirect("/")
+
+
+def ApiUpdatePwd(request):
+    if request.method == "GET":
+        form = PasswordResetForm()
+        return render(request, "common/update_pwd.html", {"form": form})
+
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("common:login")
 
 
 def index_common(request):  # dashboard
@@ -149,7 +182,3 @@ def ApiSignup(request):
         print("회원가입 실패")
         form = UserForm()
         return render(request, "common/signup.html", {"form": form})
-
-
-def ApiUpdatePwd(request):
-    pass

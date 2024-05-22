@@ -10,22 +10,22 @@
 <!-- 네비게이션 바 -->
 {% include 'common/navigation_bar.html' %}
 
+
 <div class="container my-3">
-    <form method="POST" action="{% url 'common:ApiUpdatePwd' %}">
+    <ul class="text-danger">
+        <li> 비밀번호를 변경하세요!</li>
+        <li> 현재 사용자 코드는 초기 비밀번호 상태입니다.</li>
+    </ul>
+</div>
+
+<div class="container my-5">
+    <form method="POST" action="{% url 'common:ApiUpdatePwd' %}"}>
         {% csrf_token %}
-
-    <div class="mb-3">
-            <label for="password1">비밀번호</label>
-            <input type="password" class="form-control" name="password1" id="password1"
-                   value="{{ form.password1.value|default_if_none:'' }}">
+        {{ form.as_p }}
+        <div class="d-grid gap-2 d-md-block">
+            <button type="submit" class="btn btn-outline-primary">비밀번호 재설정</button>
+            <a href="/login/" class="btn btn-outline-primary" role="button">취소</a>
         </div>
-        <div class="mb-3">
-            <label for="password2">비밀번호 확인</label>
-            <input type="password" class="form-control" name="password2" id="password2"
-                   value="{{ form.password2.value|default_if_none:'' }}">
-
-        </div>
-        <button type="submit" class="btn btn-primary">생성하기</button>
     </form>
 
 <!-- 부트스트랩 및 팝퍼, 제이쿼리 CDN 추가 -->
