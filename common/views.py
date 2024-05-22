@@ -1,5 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
+# login
+from .forms import CustomAuthenticationForm, PasswordResetForm
+from django.contrib.auth import views as auth_views
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.urls import reverse
+
+
 from checking.models import Member
 from django.contrib.auth.models import User
 from common.forms import UserForm
@@ -9,9 +17,36 @@ from graph.views import ApiGraph6week as graph_6week
 from graph.views import ApiGraphWeekly as graph_weekly
 
 
+class CustomLoginView(auth_views.LoginView):
+    authentication_form = CustomAuthenticationForm
+    template_name = "common/login.html"
+
+    def form_valid(self, form):
+        user = form.get_user()
+
+        if user.check_password("poko0000!"):
+            # redirect와의 차이?
+            return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))
+
+        auth_login(self.request, user)
+        return HttpResponseRedirect(self.get_success_url())
+
+
 def logout_view(request):
     logout(request)
     return redirect("/")
+
+
+def ApiUpdatePwd(request):
+    if request.method == "GET":
+        form = PasswordResetForm()
+        return render(request, "common/update_pwd.html", {"form": form})
+
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("common:login")
 
 
 def index_common(request):  # dashboard
@@ -135,14 +170,14 @@ def ApiSignup(request):
             # 문제 : 사용자 인증(authenticate)에서 none을 반환
             # authenticate가 기존에 있던 uiseok의 아이디와 비밀번호로도 인증하지 못함
             # 회원 가입만 처리하고 로그인은 사용자가 직접하는 방법 고려 화요일까지 -> 완료
-
             # if user is not None:
             #     print("user is not none!")
             #     login(request, user)
-        else :
+
+        else:
             print("폼이 유효하지 않습니다.")
             print(form.errors)
-            return render(request, 'common/signup.html', {'form': form})
+            return render(request, "common/signup.html", {"form": form})
     else:
         print("회원가입 실패")
         form = UserForm()
