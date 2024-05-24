@@ -26,9 +26,8 @@ class CustomAuthenticationForm(AuthenticationForm):
         label="비밀번호",
     )
 
+
 # SetPasswordForm은 username 입력이 없다! SetPasswordForm은 로그인이 된 상태에서 비밀번호를 설정하는 경우 상속받아 사용하는 것이 좋다.
-
-
 
 
 class UserForm(UserCreationForm):
