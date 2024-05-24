@@ -1,5 +1,5 @@
 # login
-from .forms import CustomAuthenticationForm, PasswordResetForm
+from .forms import CustomAuthenticationForm, CustomSetPasswordForm
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout
@@ -26,7 +26,6 @@ class CustomLoginView(auth_views.LoginView):
         user = form.get_user()
 
         if user.check_password("poko0000!"):
-            # redirect와의 차이?
             return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))
 
         auth_login(self.request, user)
@@ -35,7 +34,6 @@ class CustomLoginView(auth_views.LoginView):
 
         else:
             return HttpResponseRedirect(reverse("common:ApiIndexUser"))
-            # return HttpResponseRedirect(self.get_success_url())
 
 
 def logout_view(request):
@@ -45,13 +43,13 @@ def logout_view(request):
 
 def ApiUpdatePwd(request):
     if request.method == "GET":
-        form = PasswordResetForm()
+        form = CustomSetPasswordForm()
         return render(request, "common/update_pwd.html", {"form": form})
 
     if request.method == "POST":
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            form.save()
+        form = CustomSetPasswordForm(request.POST)
+        if form.is_valid():  # user.save()로 비밀번호가 변경 된 form의 유효성을 검사하고
+            form.save()  # 저장
             return redirect("common:login")
 
 
