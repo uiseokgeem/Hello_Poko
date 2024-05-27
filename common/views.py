@@ -7,7 +7,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-
 from checking.models import Member
 from django.contrib.auth.models import User
 from common.forms import UserForm
@@ -36,7 +35,7 @@ class CustomLoginView(auth_views.LoginView):
             return HttpResponseRedirect(reverse("common:ApiIndexUser"))
 
 
-def logout_view(request):
+def ApiLogoutView(request):
     logout(request)
     return redirect("/")
 

@@ -3,7 +3,6 @@ from django.contrib.auth import views as auth_views
 from . import views
 from .views import CustomLoginView
 
-
 app_name = "common"
 
 urlpatterns = [
@@ -16,7 +15,7 @@ urlpatterns = [
         name="login",
     ),
     path("update_pwd", views.ApiUpdatePwd, name="ApiUpdatePwd"),
-    path("logout/", views.logout_view, name="logout"),
+    path("logout/", views.ApiLogoutView, name="ApiLogoutView"),
     path("register/", views.RegisterForm),
     path("register/create/", views.ApiRegister),
     path("register/climb/", views.ApiClimb),
@@ -29,4 +28,9 @@ urlpatterns = [
     #     CustomPasswordResetView.as_view(template_name="common/update_pwd.html"),
     #     name="CustomPasswordResetView",
     # ),
+    # path(
+    #         "update_pwd/done/",
+    #         CustomPasswordChangeDoneView.as_view(),
+    #         name="CustomPasswordChangeDoneView",
+    #     ),
 ]
