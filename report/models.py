@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from account.models import CustomUser
 from checking.models import Member
 from django.db.models import Model
 
@@ -18,7 +18,7 @@ class MemberCheck(models.Model):
 
 class UserCheck(models.Model):
     teacher = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="usercheck",
         to_field="username",

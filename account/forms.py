@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
+from account.models import CustomUser
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -52,7 +52,7 @@ class CustomSetPasswordForm(forms.Form):
     # 유효성 검사
     def clean_username(self):
         username = self.cleaned_data.get("username")
-        if not User.objects.filter(username=username).exists():
+        if not CustomUser.objects.filter(username=username).exists():
             raise forms.ValidationError("입력하신 사용자 코드에 해당하는 사용자가 없습니다.")
         return username
 
@@ -71,23 +71,46 @@ class CustomSetPasswordForm(forms.Form):
     def save(self):
         username = self.cleaned_data.get("username")
         new_password1 = self.cleaned_data.get("new_password1")
-        user = User.objects.get(username=username)
+        user = CustomUser.objects.get(username=username)
         user.set_password(new_password1)
         user.save()
 
 
 class UserForm(UserCreationForm):
-    first_name = forms.CharField(label="성")
-    last_name = forms.CharField(label="이름")
-    email = forms.EmailField(label="이메일")
+    username = forms.CharField(
+        max_length=12,
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "사용할 아이디를 입력해주세요."}
+        ),
+        label="사용자 아이디",
+    )
+
+    full_name = forms.CharField(
+        max_length=12,
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "교사의 이름을 입력해주세요."}
+        ),
+        label="이름",
+    )
+
+    password1 = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "비밀번호를 입력하세요."}
+        ),
+        label="비밀번호",
+    )
+
+    password2 = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "입력한 비밀번호를 확인합니다!"}
+        ),
+        label="비밀번호 확인",
+    )
 
     class Meta:
-        model = User
-        fields = (
-            "username",
-            "password1",
-            "password2",
-            "first_name",
-            "last_name",
-            "email",
-        )
+        model = CustomUser
+        fields = ("username", "full_name", "password1", "password2")

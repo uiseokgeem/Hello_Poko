@@ -37,8 +37,10 @@ def ApiSignup(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data["username"]
-            raw_password1 = form.cleaned_data["password1"]
-            raw_password2 = form.cleaned_data["password2"]
+            raw_password1 = form.cleaned_data[
+                "password1"
+            ]  # raw_password1 -> password로 변경후 자동 로그인 시도
+
             print("ApiSignup Complete!", username, raw_password1)
             return redirect("account:login")
 

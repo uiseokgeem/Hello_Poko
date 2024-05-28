@@ -10,13 +10,13 @@ class LoginRequiredMiddleware:
         if not request.user.is_authenticated:
             if not request.path.startswith(reverse("account:login")):
                 if (
-                    request.path == reverse("account:ApiUpdatePwd")
+                    request.path == reverse("account:ApiSignup")
                     and request.method == "GET"
                 ):
                     print("비인증 초기비밀번호 계정")
                     pass
                 elif (
-                    request.path == reverse("account:ApiUpdatePwd")
+                    request.path == reverse("account:ApiSignup")
                     and request.method == "POST"
                 ):
                     pass
