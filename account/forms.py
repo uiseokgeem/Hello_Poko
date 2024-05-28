@@ -91,19 +91,3 @@ class UserForm(UserCreationForm):
             "last_name",
             "email",
         )
-
-
-# CustomAuthenticationForm에서 유효성 검사 코드
-# def clean(self):
-#    cleaned_data = super().clean()
-#     username = cleaned_data.get("username")
-#     password = cleaned_data.get("password")
-#
-#     # if password:
-#     #     if password == "poko0000!":
-#     #         raise forms.ValidationError("초기 비밀번호 입니다. 로그인 할 수 없어요.")
-#     return cleaned_data
-
-# def confirm_login_allowed(self, user):
-#     if user.check_password("poko0000!"):
-#         return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))

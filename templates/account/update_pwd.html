@@ -19,7 +19,7 @@
 </div>
 
 <div class="container my-5">
-    <form method="POST" action="{% url 'common:ApiUpdatePwd' %}"}>
+    <form method="POST" action="{% url 'account:ApiUpdatePwd' %}"}>
         {% csrf_token %}
         {{ form.as_p }}
         <div class="d-grid gap-2 d-md-block">

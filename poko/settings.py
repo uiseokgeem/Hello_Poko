@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "checking",
     "report",
     "graph",
+    "account",
     # "django.contrib.sites",
     # "allauth",
     # "allauth.account",

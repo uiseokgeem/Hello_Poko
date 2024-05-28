@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls import reverse
 
 
@@ -8,21 +8,21 @@ class LoginRequiredMiddleware:
 
     def __call__(self, request):
         if not request.user.is_authenticated:
-            if not request.path.startswith(reverse("common:login")):
+            if not request.path.startswith(reverse("account:login")):
                 if (
-                    request.path == reverse("common:ApiUpdatePwd")
+                    request.path == reverse("account:ApiUpdatePwd")
                     and request.method == "GET"
                 ):
                     print("비인증 초기비밀번호 계정")
                     pass
                 elif (
-                    request.path == reverse("common:ApiUpdatePwd")
+                    request.path == reverse("account:ApiUpdatePwd")
                     and request.method == "POST"
                 ):
                     pass
                 else:
                     print("비인증 login url이 아닌 경우")
-                    return redirect(reverse("common:login"))
+                    return redirect(reverse("account:login"))
 
         response = self.get_response(request)
         return response

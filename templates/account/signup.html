@@ -11,7 +11,7 @@
 {% include 'common/navigation_bar.html' %}
 
 <div class="container my-3">
-    <form method="POST" action="{% url 'common:ApiSignup' %}">
+    <form method="POST" action="{% url 'account:ApiSignup' %}">
         {% csrf_token %}
 {#        {% include "form_errors.html" %}#}
         <div class="mb-3">
