@@ -27,7 +27,7 @@
             text-align: center;
             padding: 10px; /* 셀의 내부 여백 조정 */
         }
-        
+
         th {
             background-color: #f2f2f2;
         }
@@ -61,26 +61,38 @@
 </div>
 <div class="regibox" align="center">
     <br class="regi-page" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-        <table>
-            {% for name in user_students %}
+    <form method="POST" action="/checking/check/">
+        <table border="1">
+
+            <thead>
                 <tr>
-                    <td><strong>{{ name }}</strong></td>
+                    <th>이름</th>
+                    <th>출석 여부</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for user_student in user_students %}
+                    <tr>
+                    <td><strong>{{ user_student.name }}</strong></td>
                     <td>
-                            <form method="POST" action="/checking/check/">
-                            {% csrf_token %}
+                        {% csrf_token %}
                             <input type="hidden" id="date" name="date" value={{ date }}>
-                            <input type="hidden" id="name" name="name" value={{ name }}>
-                            <label><input type="radio" name="attendance" value="출석">출석</label>
-                            <label><input type="radio" name="attendance" value="결석">결석</label>
-                            <td><button type="submit" class="btn btn-primary">Check</button></td>
-                            </form>
+                            <input type="hidden" id="name" name="name" value={{ user_student.name }}>
+                            <!-- ID를 개별적으로 맞춰야 함. -->
+                            <label><input type="radio" name = "attendance_action_{{ user_student.id }}" value="출석">출석</label>
+                            <label><input type="radio" name = "attendance_action_{{ user_student.id }}" value="결석">결석</label>
+
                     </td>
+
                     {% if finisehd_text %}
                         <td>{{ finisehd_text }}</td>
                     {% endif %}
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
+        <button type="submit" class="btn btn-primary">Check</button>
+    </form>
         <br><br>
         <a href="/common/user/" class="btn btn-primary">Home</a>
     </div>

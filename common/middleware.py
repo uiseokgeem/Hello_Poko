@@ -7,26 +7,13 @@ class LoginRequiredMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if not request.user.is_authenticated:
-            if not request.path.startswith(reverse("common:login")):
-                if (
-                    request.path == reverse("common:ApiUpdatePwd")
-                    and request.method == "GET"
-                ):
-                    print("비인증 초기비밀번호 계정")
-                    pass
-                elif (
-                    request.path == reverse("common:ApiUpdatePwd")
-                    and request.method == "POST"
-                ):
-                    pass
-                else:
-                    print("비인증 login url이 아닌 경우")
-                    return redirect(reverse("common:login"))
-
+        if not request.user.is_authenticated :
+            if request.path != reverse('common:login') and request.path != reverse('common:ApiUpdatePwd') and request.path != reverse('common:ApiUpdatePwd'):  # 로그인 페이지가 아닐 경우에만 리다이렉트
+                return redirect(reverse('common:login'))
+        else:
+            pass
         response = self.get_response(request)
         return response
-
 
 # middleware는 모든 요청에 대해 검사를 수행하게 되어 성능에 영향을 줄 수 있음.
 # elif request.user.is_authenticated:
