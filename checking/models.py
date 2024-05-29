@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from account.models import CustomUser
 
 
 class Member(models.Model):
     teacher = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="members",
         to_field="username",

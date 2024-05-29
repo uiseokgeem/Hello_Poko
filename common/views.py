@@ -1,58 +1,13 @@
-# login
-from .forms import CustomAuthenticationForm, PasswordResetForm
-from django.contrib.auth import views as auth_views
-from django.contrib.auth import login as auth_login
-from django.contrib.auth import logout
-from django.http import HttpResponseRedirect, HttpResponse
+# common
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
-
-
 from checking.models import Member
 from django.contrib.auth.models import User
-from common.forms import UserForm
 
 # Graph
 from graph.views import ApiGraph6week as graph_6week
 from graph.views import ApiGraphWeekly as graph_weekly
 from graph.views import ApiGraphIndividual as graph_individual
-
-
-class CustomLoginView(auth_views.LoginView):
-    authentication_form = CustomAuthenticationForm
-    template_name = "common/login.html"
-
-    def form_valid(self, form):
-        user = form.get_user()
-
-        if user.check_password("poko0000!"):
-            # redirect와의 차이?
-            return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))
-
-        auth_login(self.request, user)
-        if user.username == "poko01" or user.username == "poko02":
-            return HttpResponseRedirect(reverse("common:ApiIndexManager"))
-
-        else:
-            return HttpResponseRedirect(reverse("common:ApiIndexUser"))
-            # return HttpResponseRedirect(self.get_success_url())
-
-
-def logout_view(request):
-    logout(request)
-    return redirect("/")
-
-
-def ApiUpdatePwd(request):
-    if request.method == "GET":
-        form = PasswordResetForm()
-        return render(request, "common/update_pwd.html", {"form": form})
-
-    if request.method == "POST":
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("common:login")
 
 
 def ApiIndexManager(request):  # dashboard
@@ -184,33 +139,74 @@ def ApiError(request):
     return render(request, "common/error.html", {})
 
 
-def ApiSignup(request):
-    if request.method == "POST":
-        form = UserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data["username"]
-            raw_password1 = form.cleaned_data["password1"]
-            raw_password2 = form.cleaned_data["password2"]
-            print("ApiSignup Complete!", username, raw_password1)
-            return redirect("common:login")
+# def ApiSignup(request):
+#     if request.method == "POST":
+#         form = UserForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             username = form.cleaned_data["username"]
+#             raw_password1 = form.cleaned_data["password1"]
+#             raw_password2 = form.cleaned_data["password2"]
+#             print("ApiSignup Complete!", username, raw_password1)
+#             return redirect("common:login")
+#
+#         else:
+#             print("폼이 유효하지 않습니다.")
+#             print(form.errors)
+#             return render(
+#                 request, "common/../templates/account/signup.html", {"form": form}
+#             )
+#     else:
+#         print("회원가입 실패")
+#         form = UserForm()
+#         return render(
+#             request, "common/../templates/account/signup.html", {"form": form}
+#         )
 
-            # user = authenticate(
-            #     user=username,
-            #     password=raw_password1,
-            # )
-            # 문제 : 사용자 인증(authenticate)에서 none을 반환
-            # authenticate가 기존에 있던 uiseok의 아이디와 비밀번호로도 인증하지 못함
-            # 회원 가입만 처리하고 로그인은 사용자가 직접하는 방법 고려 화요일까지 -> 완료
-            # if user is not None:
-            #     print("user is not none!")
-            #     login(request, user)
+# ApiSignup 이슈
+# user = authenticate(
+#     user=username,
+#     password=raw_password1,
+# )
+# 문제 : 사용자 인증(authenticate)에서 none을 반환
+# authenticate가 기존에 있던 uiseok의 아이디와 비밀번호로도 인증하지 못함
+# 회원 가입만 처리하고 로그인은 사용자가 직접하는 방법 고려 화요일까지 -> 완료
+# if user is not None:
+#     print("user is not none!")
+#     login(request, user)
 
-        else:
-            print("폼이 유효하지 않습니다.")
-            print(form.errors)
-            return render(request, "common/signup.html", {"form": form})
-    else:
-        print("회원가입 실패")
-        form = UserForm()
-        return render(request, "common/signup.html", {"form": form})
+# class CustomLoginView(auth_views.LoginView):
+#     authentication_form = CustomAuthenticationForm
+#     template_name = "common/../templates/account/login.html"
+#
+#     def form_valid(self, form):
+#         user = form.get_user()
+#
+#         if user.check_password("poko0000!"):
+#             return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))
+#
+#         auth_login(self.request, user)
+#         if user.username == "poko01" or user.username == "poko02":
+#             return HttpResponseRedirect(reverse("common:ApiIndexManager"))
+#
+#         else:
+#             return HttpResponseRedirect(reverse("common:ApiIndexUser"))
+#
+#
+# def ApiLogoutView(request):
+#     logout(request)
+#     return redirect("/")
+#
+#
+# def ApiUpdatePwd(request):
+#     if request.method == "GET":
+#         form = CustomSetPasswordForm()
+#         return render(
+#             request, "common/../templates/account/update_pwd.html", {"form": form}
+#         )
+#
+#     if request.method == "POST":
+#         form = CustomSetPasswordForm(request.POST)
+#         if form.is_valid():  # user.save()로 비밀번호가 변경 된 form의 유효성을 검사하고
+#             form.save()  # 저장
+#             return redirect("common:login")

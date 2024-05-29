@@ -33,12 +33,12 @@
             <div class="card">
                 <div class="card-body text-center">
                     <div class="container my-3">
-                        <form method="post" action="{% url 'common:login' %}">
+                        <form method="post" action="{% url 'account:login' %}">
                             {% csrf_token %}
                             {{ form.as_p }}
                             <div class="d-grid gap-2 d-md-block">
                                 <button type="submit" class="btn btn-outline-primary">로그인</button>
-                                <a href="/" class="btn btn-outline-primary" role="button">비밀번호 찾기(개발)</a>
+                                <a href="/static" class="btn btn-outline-primary" role="button">비밀번호 찾기(개발)</a>
                             </div>
                         </form>
                     </div>

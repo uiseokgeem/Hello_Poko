@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--모바일 장치에서 웹페이지가 올바르게 표시되게 함-->
+    <title>Hello! POKO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+{% include 'common/navigation_bar.html' %}
+
+
+<div class="container my-3">
+    <ul class="text-danger">
+        <li> 비밀번호를 변경하세요!</li>
+        <li> 현재 사용자 코드는 초기 비밀번호 상태입니다.</li>
+    </ul>
+</div>
+
+<div class="container my-5">
+    <form method="POST" action="{% url 'account:ApiUpdatePwd' %}"}>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="d-grid gap-2 d-md-block">
+            <button type="submit" class="btn btn-outline-primary">비밀번호 재설정</button>
+            <a href="/login/" class="btn btn-outline-primary" role="button">취소</a>
+        </div>
+    </form>
+
+<!-- 부트스트랩 및 팝퍼, 제이쿼리 CDN 추가 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtuRU5mgxhX46XBgVZcDIvT8xUn1AKqN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-eMN3A/EqCO9MDiMbyt9JLMBRVo/bap1P0M8zS1oA2bQKmN8ib80zNEcVTtKc6I8" crossorigin="anonymous"></script>
+
+</body>
+</html>

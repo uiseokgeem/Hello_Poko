@@ -8,7 +8,7 @@ class LoginRequiredMiddleware:
 
     def __call__(self, request):
         if not request.user.is_authenticated :
-            if request.path != reverse('common:login') and request.path != reverse('common:ApiUpdatePwd') and request.path != reverse('common:ApiUpdatePwd'):  # 로그인 페이지가 아닐 경우에만 리다이렉트
+            if request.path != reverse('account:login') and request.path != reverse('account:ApiSignup') and request.path != reverse('account:ApiUpdatePwd'):  # 로그인 페이지가 아닐 경우에만 리다이렉트
                 return redirect(reverse('common:login'))
         else:
             pass
