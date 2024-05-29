@@ -6,8 +6,8 @@ app_name = "common"
 urlpatterns = [
     path("manager/", views.ApiIndexManager, name="ApiIndexManager"),
     path("user/", views.ApiIndexUser, name="ApiIndexUser"),
-    path("register/", views.RegisterForm),
-    path("register/create/", views.ApiRegister),
+    # path("register/", views.RegisterForm),
+    path("register/create/", views.ApiNewRegister, name = "ApiNewRegister"),
     path("register/climb/", views.ApiClimb),
     path("error/", views.ApiError, name="ApiError"),
     # 5월 22일 기준 사용하지 않는 url

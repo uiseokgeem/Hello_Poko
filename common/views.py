@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from checking.models import Member
 from django.contrib.auth.models import User
+from account.models import CustomUser
 
 # Graph
 from graph.views import ApiGraph6week as graph_6week
@@ -82,17 +83,15 @@ def ApiIndexUser(request):
         return HttpResponse("교사 페이지 입니다. 잘못된 접근 입니다.")
 
 
-def RegisterForm(request):
-    teacher_name = request.user.username
-    teachers = User.objects.all().exclude(username=teacher_name)
+def ApiNewRegister(request):
+    if request.method == "GET" :
+        teacher_name = request.user.username
+        teachers = CustomUser.objects.all().exclude(username=teacher_name)
 
-    members = Member.objects.filter(teacher=teacher_name)
-    return render(
-        request, "common/register.html", {"teachers": teachers, "members": members}
-    )
-
-
-def ApiRegister(request):
+        members = Member.objects.filter(teacher=teacher_name)
+        return render(
+            request, "common/register.html", {"teachers": teachers, "members": members}
+        )
     if request.method == "POST" and request.user.is_authenticated:
         #     try :
         #         user = User.objects.get(username="임시선생님")
@@ -104,7 +103,7 @@ def ApiRegister(request):
         # teacher_name = request.POST.get('teacher')
         # teacher = User.objects.get(username=teacher_name)
         teacher_name = request.user.username
-        teacher = User.objects.get(username=teacher_name)
+        teacher = CustomUser.objects.get(username=teacher_name)
         new_register.teacher = teacher
         name = request.POST.get("name")
         if Member.objects.filter(name=name).exists():
@@ -117,7 +116,7 @@ def ApiRegister(request):
             new_register.grade = request.POST["grade"]
             new_register.gender = request.POST["gender"]
             new_register.save()
-            return redirect("/register/")
+            return redirect("/common/register/create/")
     return redirect("/")
 
 
@@ -128,10 +127,10 @@ def ApiClimb(request):
 
         member = Member.objects.get(pk=member_id)
         # member = get_object_or_404(Member, pk=member_id)
-        member.teacher = User.objects.get(pk=selected_teacher_id)
+        member.teacher = CustomUser.objects.get(pk=selected_teacher_id)
         member.save()
-        return redirect("/register/")
-    teachers = User.objects.all()
+        return redirect("/common/register/create/")
+    teachers = CustomUser.objects.all()
     return render(request, "common/register.html", {"teachers": teachers})
 
 

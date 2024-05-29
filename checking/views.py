@@ -38,7 +38,7 @@ def ApiAttendanceList(request):
 
         date_set = {data['date'].strftime('%Y-%m-%d') for data in attendances}
         if date in date_set:
-            return redirect("/")
+            return redirect("/common/user/")
         # user_students = sorted(list(user_students))
 
         return render(
@@ -131,7 +131,8 @@ def ApiAttendanceChecking(request):  # 수정완료-태욱님
         # member_info.save()
         # attendance.save()
 
-        return redirect("/")
+
+        return redirect("/common/user/")
         # return render(
         #     request,
         #     "checking/attendance_check.html",

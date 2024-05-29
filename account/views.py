@@ -16,7 +16,7 @@ class CustomLoginView(auth_views.LoginView):
         user = form.get_user()
 
         if user.check_password("poko0000!"):
-            return HttpResponseRedirect(reverse("common:ApiUpdatePwd"))
+            return HttpResponseRedirect(reverse("account:ApiUpdatePwd"))
 
         auth_login(self.request, user)
         if user.username == "poko01" or user.username == "poko02":
