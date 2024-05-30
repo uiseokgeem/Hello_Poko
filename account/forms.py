@@ -86,15 +86,6 @@ class UserForm(UserCreationForm):
         label="사용자 아이디",
     )
 
-    full_name = forms.CharField(
-        max_length=12,
-        required=True,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "교사의 이름을 입력해주세요."}
-        ),
-        label="이름",
-    )
-
     password1 = forms.CharField(
         required=True,
         widget=forms.PasswordInput(
@@ -111,6 +102,42 @@ class UserForm(UserCreationForm):
         label="비밀번호 확인",
     )
 
+    full_name = forms.CharField(
+        max_length=12,
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "교사의 이름을 입력해주세요."}
+        ),
+        label="이름",
+    )
+
+    birth_date = forms.DateField(
+        required=True,
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "생년월일을 입력하세요.",
+                "type": "date",
+            }
+        ),
+        label="생년월일",
+    )
+
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "비밀번호 찾기를 위해 이메일을 입력하세요."}
+        ),
+        label="이메일",
+    )
+
     class Meta:
         model = CustomUser
-        fields = ("username", "full_name", "password1", "password2")
+        fields = (
+            "username",
+            "password1",
+            "password2",
+            "full_name",
+            "birth_date",
+            "email",
+        )
