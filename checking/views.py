@@ -47,7 +47,7 @@ def ApiAttendanceChecking(request):  # 수정완료-태욱님
         checked_date = request.POST["date"]
         if Attendance.objects.filter(name=checked_name, date=checked_date).exists():
             noti = Attendance.objects.filter(name=checked_name, date=checked_date)
-            poko_image = GetImage.objects.get(pk=3).image.url
+            # poko_image = GetImage.objects.get(pk=3).image.url
             attendance_noti_text = (
                 f"{checked_name} 학생은 {noti[0].attendance}으로 확인이 완료 되었습니다!"
             )
@@ -59,7 +59,6 @@ def ApiAttendanceChecking(request):  # 수정완료-태욱님
                     "attendance_noti_text": attendance_noti_text,
                     "checked_name": checked_name,
                     "checked_date": checked_date,
-                    "poko_image": poko_image,
                 },
             )
 
@@ -123,7 +122,6 @@ def ApiAttendanceModify(request):
         modi_name = modi[0].name
         modi_date = modi[0].date
         modi_attendance = modi[0].attendance
-        poko_image = GetImage.objects.get(pk=3).image.url
         return render(
             request,
             "checking/attendance_noti.html",
@@ -131,7 +129,6 @@ def ApiAttendanceModify(request):
                 "modi_name": modi_name,
                 "modi_attendance": modi_attendance,
                 "modi_date": modi_date,
-                "poko_image": poko_image,
             },
         )
 
@@ -152,13 +149,11 @@ def ApiAttendanceModify(request):
         attendance_modied_text = (
             f"{modied_name} 학생은 {modied_attendance}으로 수정이 완료 되었습니다!"
         )
-        poko_image = GetImage.objects.get(pk=3).image.url
         return render(
             request,
             "checking/attendance_noti.html",
             {
                 "attendance_modied_text": attendance_modied_text,
-                "poko_image": poko_image,
             },
         )
 
