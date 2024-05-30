@@ -111,6 +111,7 @@ soupsieve==2.5
 sqlparse==0.4.4
 stack-data==0.2.0
 terminado==0.18.0
+typing==3.7.4.3
 tinycss2==1.2.1
 tornado==6.4
 traitlets==5.7.1

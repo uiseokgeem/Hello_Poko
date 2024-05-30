@@ -184,3 +184,6 @@ LOGIN_REDIRECT_URL = "/"
 
 # middleware login 인증이 아닌 경우 이동하는 URL
 LOGIN_URL = "login/"
+
+
+#

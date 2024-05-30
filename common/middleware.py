@@ -12,6 +12,7 @@ class LoginRequiredMiddleware:
                 request.path != reverse("account:login")
                 and request.path != reverse("account:ApiUpdatePwd")
                 and request.path != reverse("account:ApiSignup")
+                and request.path != reverse("account:ApiResetPwd")
             ):
                 return redirect(reverse("account:login"))
         else:
