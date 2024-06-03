@@ -25,6 +25,16 @@
 <!-- 네비게이션 바 -->
 {% include 'common/navigation_bar.html' %}
 
+<div class="container">
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
 <div class="container mt-4">
     <div class="row">
         <img src="{% static 'common/images/POKO_ver.1.jpg' %}" alt="Poko" width="" height="300" class="resized-image">

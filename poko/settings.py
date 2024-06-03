@@ -10,12 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
+from environ import Env
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+env = Env()
+ENV_PATH = BASE_DIR / ".env"
+if ENV_PATH.exists():
+    print("환경변수 파일 있으니까 읽어올게! .env file")
+    with ENV_PATH.open(encoding="utf-8") as f:
+        env.read_env(f, overwrite=True)
+else:
+    print("ENV_PATH에 환경 변수가 없다!", ENV_PATH)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -72,7 +82,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
     "common.middleware.LoginRequiredMiddleware",
 ]
 
@@ -186,4 +195,25 @@ LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "login/"
 
 
-#
+# email
+EMAIL_HOST = env.str(var="EMAIL_HOST", default=None)
+
+# 환경변수로 읽어온 EMAIL_HOST가 None이면 console.EmailBackend를 수행!
+if DEBUG and EMAIL_HOST is None:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    try:
+        EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+        EMAIL_PORT = env.int("EMAIL_PORT")
+        EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
+        EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=False)
+        EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+        EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+        DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL")
+    except ImproperlyConfigured as e:  # 참조시 default 값을 지정하지 않았기에 미설정 오류가 발생할 수 있다.
+        print(
+            "default 값을 지정 하지않아 발생한 미설정 오류 :", e, file=sys.stderr
+        )  # 미설정 시 오류 내용을 화면에 출력
+        EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# 계정정보는 프로젝트에 하드코딩이 아닌 .env을통해 주입 받는다
