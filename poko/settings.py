@@ -60,12 +60,14 @@ INSTALLED_APPS = [
     # thrid apps
     "django_extensions",
     "debug_toolbar",
+    "rest_framework",
     # local apps
     "common",
     "checking",
     "report",
     "graph",
     "account",
+    "blog",  # dfr test
     # "django.contrib.sites",
     # "allauth",
     # "allauth.account",
@@ -217,3 +219,13 @@ else:
         EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # 계정정보는 프로젝트에 하드코딩이 아닌 .env을통해 주입 받는다
+
+# DRF
+# https://www.django-rest-framework.org/#installation
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     "DEFAULT_PERMISSION_CLASSES": [
+#         "rest_framework.permissions.AllowAny"
+#     ]
+# }
