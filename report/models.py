@@ -37,13 +37,11 @@ class UserCheck(models.Model):
         to_field="username",
     )
     worship = models.IntegerField(
-        max_length=3,
         null=True,
         default=None,
         choices=worship_choice,
     )
     qt = models.IntegerField(
-        max_length=3,
         null=True,
         default=None,
         choices=qt_choice,
@@ -56,8 +54,8 @@ class UserCheck(models.Model):
         max_length=300, null=True, default=None
     )  # 반 모임을 위한 기도
     pray_user = models.CharField(max_length=300, null=True, default=None)  # 사용자에 대한 기도
-    issue = models.IntegerField(max_length=300, null=True, default=None)  # 문의사항/긴급사항
+    pray_emergency = models.CharField(
+        max_length=300, null=True, default=None
+    )  # 교사 긴급 기도
+    issue = models.CharField(max_length=300, null=True, default=None)  # 문의사항/긴급사항
     date = models.DateTimeField()  # 작성일 기준 이전 주일 입력
-
-    # pray_emergency = models.CharField(max_length=300, null=True, default=None)  # 교사 긴급 기도 보류
-    # pray_time = models.CharField(max_length=4, null=True, default=None)  # 교사 사용자 기도 시간 보류

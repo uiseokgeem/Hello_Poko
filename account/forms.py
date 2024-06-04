@@ -37,6 +37,7 @@ class PasswordResetForm(forms.Form):
             # 새로운 암호를 입력받아, 암호를 변경하는 뷰
             # path는 uidb64와 token으로 구성된 ApiResetPwdConfirm url 접근 경로
             path = resolve_url("account:ApiResetPwdConfirm", uidb64=uidb64, token=token)
+
             # 실사용 pwd reset url
             reset_url = f"{scheme}://{host}{path}"
             print(f"{email} 이메일로 {reset_url} 주소를 발송합니다.")  # TODO: 이메일 발송

@@ -21,7 +21,6 @@ class UserCheckAdmin(admin.ModelAdmin):
         "worship",
         "meeting",
         "qt",
-        "pray_time",
         "pray_youth",
         "pray_group",
         "pray_user",

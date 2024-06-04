@@ -107,6 +107,7 @@ class ApiResetPwdConfirm(PasswordResetConfirmView):
 
 
 # token_generator = default_token_generator
+
 # def ApiResetPwdConfirm(request, uidb64, token):
 #     uid = urlsafe_base64_decode(uidb64).decode()
 #     user = get_object_or_404(CustomUser, pk=uid)
