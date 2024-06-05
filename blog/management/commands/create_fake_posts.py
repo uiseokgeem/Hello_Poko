@@ -12,6 +12,8 @@ fake = Faker(locale="ko_KR")
 User = get_user_model()
 
 
+# BaseCommand를 상속
+# python manage.py create_fake_data
 class Command(BaseCommand):
     def handle(self, *args, **options):
         user_list = []

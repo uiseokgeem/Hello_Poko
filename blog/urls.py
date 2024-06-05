@@ -7,8 +7,8 @@ app_name = "blog"
 urlpatterns = []
 
 urlpattern_api_v1 = [
-    path("", api.post_list, name="post_list"),
-    path("<int:pk>", api.post_detail, name="post_detail"),
+    path("", api.PostListAPIView.as_view(), name="post_list"),
+    path("<int:pk>", api.PostRetrieveAPIView.as_view(), name="post_detail"),
 ]
 
 urlpatterns += [
