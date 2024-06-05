@@ -59,3 +59,17 @@ class UserCheck(models.Model):
     )  # 교사 긴급 기도
     issue = models.CharField(max_length=300, null=True, default=None)  # 문의사항/긴급사항
     date = models.DateTimeField()  # 작성일 기준 이전 주일 입력
+
+
+class Comment(models.Model):
+    teacher = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="comment",
+        to_field="username",
+    )
+    member_check = models.ForeignKey(
+        MemberCheck, on_delete=models.CASCADE, related_name="comment"
+    )
+    feedback = models.CharField(max_length=500)
+    date = models.DateTimeField()

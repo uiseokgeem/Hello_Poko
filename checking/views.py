@@ -20,23 +20,19 @@ def ApiAttendanceProduce(request):
 
 
 def ApiAttendanceList(request):
-
     if request.method == "POST" and request.user.is_authenticated:
         date = request.POST.get("date", "")
         user_name = request.user.username
 
         user_students = (
-            Member.objects.all()
-            .filter(teacher=user_name)
+            Member.objects.all().filter(teacher=user_name)
             # .values_list("name", flat=True)
         )
         attendances = (
-            Attendance.objects.all()
-            .filter(name=user_students[0].name)
-            .values("date")
+            Attendance.objects.all().filter(name=user_students[0].name).values("date")
         )
 
-        date_set = {data['date'].strftime('%Y-%m-%d') for data in attendances}
+        date_set = {data["date"].strftime("%Y-%m-%d") for data in attendances}
         if date in date_set:
             return redirect("/common/user/")
         # user_students = sorted(list(user_students))
@@ -79,25 +75,27 @@ def ApiAttendanceChecking(request):  # 수정완료-태욱님
         # member_str = request.POST["name"]
         # member = Member.objects.get(name=member_str)
         date = request.POST["date"]
+        print("0605", date)
         # attendance = request.POST["attendance"]
 
         # id를 모두 딕셔너리에 저장한 다음 처리
         selected_actions = {}
         for key, value in request.POST.items():
-            if key.startswith('attendance_action_'):
-                obj_id = key.split('_')[2]
-                print(obj_id)
+            print("0605", key, value)
+            if key.startswith("attendance_action_"):
+                obj_id = key.split("_")[2]
+                print("0605 확인", obj_id)
                 selected_actions[obj_id] = value
 
         for student_id, action in selected_actions.items():
             student = Member.objects.get(id=student_id)
             print(student)
-            if action == '출석':
+            if action == "출석":
                 student.attendance_count += 1
-                attendance = '출석'
-            elif action == '결석':
+                attendance = "출석"
+            elif action == "결석":
                 student.absent_count += 1
-                attendance = '결석'
+                attendance = "결석"
 
             attendance = Attendance.objects.create(
                 name=student,
@@ -108,7 +106,6 @@ def ApiAttendanceChecking(request):  # 수정완료-태욱님
             attendance.save()
 
         # form 입력값을 Attendance의 각 필드에 저장
-
 
         # 출석 입력 후 명단에 표시 될 학생 이름
         user_students = (
@@ -129,7 +126,6 @@ def ApiAttendanceChecking(request):  # 수정완료-태욱님
 
         # member_info.save()
         # attendance.save()
-
 
         return redirect("/common/user/")
         # return render(

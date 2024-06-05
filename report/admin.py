@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MemberCheck, UserCheck
+from .models import MemberCheck, UserCheck, Comment
 
 
 @admin.register(MemberCheck)  # Register your models here.
@@ -27,3 +27,9 @@ class UserCheckAdmin(admin.ModelAdmin):
         "pray_emergency",
         "date",
     ]
+
+
+# Register your models here.
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ["id", "teacher", "member_check", "feedback", "date"]

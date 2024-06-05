@@ -30,7 +30,8 @@ class Attendance(models.Model):
     date = models.DateTimeField()
 
     def __str__(self):
-        return self.name
+        return self.name.name
+        # return self.name 시 오류
 
 
 class GetImage(models.Model):
