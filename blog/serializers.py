@@ -62,7 +62,7 @@ class CommentSerializer(serializers.ModelSerializer):
         ]
 
 
-class PostDictSerializer(serializers.ModelSerializer):
+class PostDetailSerializer(serializers.ModelSerializer):
     author = AuthorSerializer()
     # author = serializers.CharField(source="author.username")
 

@@ -5,9 +5,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from account.models import CustomUser
 
+
 # User = get_user_model()
-
-
 class Post(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
