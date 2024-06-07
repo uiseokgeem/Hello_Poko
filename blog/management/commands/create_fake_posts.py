@@ -15,36 +15,40 @@ from report.models import UserCheck, MemberCheck
 fake = Faker(locale="ko_KR")
 User = get_user_model()
 
+cnt = 10
+
 
 # BaseCommand를 상속
-# python manage.py create_fake_data
+# 실행 명령어 : python3 manage.py create_fake_posts
 class Command(BaseCommand):
     def handle(self, *args, **options):
         user_list = []
         post_list = []
-        comment_list = []
+        # comment_list = []
 
-        for __ in tqdm(range(2), desc="교사 생성"):
-            username = fake.email().split("@")[0]
-            password = username  # 이후 API 테스트할 때, 인증을 위해 유저명으로 암호 설정
-            birthday = fake.date_between()
-            full_name = fake.name()
-            email = f"{username}@example.com"
-            user = User.objects.create_user(
-                username=username,
-                password=password,
-                email=email,
-                birth_date=birthday,
-                full_name=full_name,
-            )
-            user_list.append(user)
+        # for __ in tqdm(range(cnt), desc="교사 생성"):
+        #     username = fake.email().split("@")[0]
+        #     password = username  # 이후 API 테스트할 때, 인증을 위해 유저명으로 암호 설정
+        #     birthday = fake.date_between()
+        #     full_name = fake.name()
+        #     email = f"{username}@example.com"
+        #     user = User.objects.create_user(
+        #         username=username,
+        #         password=password,
+        #         email=email,
+        #         birth_date=birthday,
+        #         full_name=full_name,
+        #     )
+        #     user_list.append(user)
 
         member_list = []
         grade_list = ["중1", "중2", "중3", "고1", "고2", "고3"]
         gender_list = ["남", "여"]
 
-        for __ in tqdm(range(2), desc="학생 생성"):
-            teacher = random.choice(user_list)
+        for __ in tqdm(range(cnt), desc="학생 생성"):
+            teacher_user = get_user_model()
+            teacher = teacher_user.objects.get(pk=1)
+            # teacher = random.choice(user_list)
             name = fake.name()
             grade = random.choice(grade_list)
             gender = random.choice(gender_list)
@@ -83,8 +87,10 @@ class Command(BaseCommand):
         end_date = "2023-05-31"
         timezone = pytz.timezone("Asia/Seoul")
         date_list = []
-        for __ in tqdm(range(2), desc="하나님 앞에서 생성"):
-            teacher = random.choice(user_list)
+        for __ in tqdm(range(cnt), desc="하나님 앞에서 생성"):
+            # teacher = random.choice(user_list)
+            teacher_user = get_user_model()
+            teacher = teacher_user.objects.get(pk=1)
             pray_youth = fake.paragraph(nb_sentences=5, variable_nb_sentences=True)
             pray_group = fake.paragraph(nb_sentences=5, variable_nb_sentences=True)
             pray_user = fake.paragraph(nb_sentences=5, variable_nb_sentences=True)
@@ -94,7 +100,7 @@ class Command(BaseCommand):
             worship = random.choice([choice[0] for choice in worship_choice])
             qt = random.choice([choice[0] for choice in qt_choice])
             date = get_random_sunday(start_date, end_date, timezone)
-            # title = fake.sentence(nb_words=6, variable_nb_words=True)[:100]  # 짧은 텍스트
+            title = f"{date}" "양육일지"  # 짧은 텍스트
 
             post = UserCheck(
                 teacher=teacher,
@@ -107,6 +113,7 @@ class Command(BaseCommand):
                 qt=qt,
                 meeting=meeting,
                 date=date,
+                title=title,
             )
             post_list.append(post)
             date_list.append(date)
@@ -116,7 +123,7 @@ class Command(BaseCommand):
 
         # 출석 생성
         attendance_list = ["출석", "결석"]
-        for __ in tqdm(range(2), desc="출석 생성"):
+        for __ in tqdm(range(cnt), desc="출석 생성"):
             name = random.choice(member_list)
             attendance = random.choice(attendance_list)
             date = random.choice(date_list)
@@ -128,7 +135,7 @@ class Command(BaseCommand):
 
         # 양육일지
         member_check_list = []
-        for __ in tqdm(range(2), desc="양육일지 생성"):
+        for __ in tqdm(range(cnt), desc="양육일지 생성"):
             name = random.choice(member_list)
             gqs = fake.boolean()
             status = fake.paragraph(nb_sentences=5, variable_nb_sentences=True)

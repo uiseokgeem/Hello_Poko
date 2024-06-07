@@ -36,6 +36,8 @@ class UserCheck(models.Model):
         related_name="usercheck",
         to_field="username",
     )
+
+    title = models.CharField(max_length=30, null=True, default=None)
     worship = models.IntegerField(
         null=True,
         default=None,

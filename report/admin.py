@@ -17,6 +17,7 @@ class MemberCheckAdmin(admin.ModelAdmin):
 class UserCheckAdmin(admin.ModelAdmin):
     list_display = [
         "id",
+        "title",
         "teacher",
         "worship",
         "meeting",
