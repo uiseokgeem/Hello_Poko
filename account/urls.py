@@ -1,4 +1,5 @@
 from . import views
+from . import api
 from django.urls import path
 from .views import CustomLoginView
 
@@ -21,3 +22,12 @@ urlpatterns = [
         name="ApiResetPwdConfirm",
     ),
 ]
+
+# urlpattern_api_v1 = [
+#     path("", api.PostListAPIView.as_view(), name="post_list"),
+#     path("<int:pk>", api.PostRetrieveAPIView.as_view(), name="post_detail"),
+# ]
+#
+# urlpatterns += [
+#     path("api/", include((urlpattern_api_v1, "api-v1"))),
+# ]
