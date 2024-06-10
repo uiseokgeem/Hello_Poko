@@ -1,7 +1,15 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    RetrieveAPIView,
+    CreateAPIView,
+    UpdateAPIView,
+    DestroyAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.utils.serializer_helpers import ReturnDict
+
+from blog.models import Post
 from blog.serializers import PostListSerializer, PostDetailSerializer, PostSerializer
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -69,3 +77,22 @@ class PostCreateAPIView(
 
 
 post_new = PostCreateAPIView.as_view()
+
+
+class PostUpdateAPIView(UpdateAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = PostSerializer.get_optimized_queryset()
+    # PostCreateAPIView와 달리 수정할 레코드 조회 과정이 필요하기 떄문에
+    # queryset 추가, PostSerializer에도 PostDetailSerializer의 get_optimized_queryset 메서드 추가.
+
+
+post_edit = PostCreateAPIView.as_view()
+
+
+class PostDestroyAPIView(DestroyAPIView):
+    queryset = Post.objects.all()
+    permission_classes = [IsAuthenticated]
+
+
+post_delete = PostDestroyAPIView.as_view()
