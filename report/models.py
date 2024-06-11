@@ -1,5 +1,5 @@
 from django.db import models
-from account.models import CustomUser
+from accounts.models import CustomUser
 from checking.models import Member
 from django.db.models import Model
 

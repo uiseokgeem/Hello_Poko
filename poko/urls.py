@@ -5,7 +5,7 @@ from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("account.urls")),  # 대시보드 연결에 사용하자!
+    path("", include("accounts.urls")),  # 대시보드 연결에 사용하자!
     path("api-auth/", include("rest_framework.urls")),
     path("blog/", include("blog.urls")),  # drf test
     path("common/", include("common.urls")),

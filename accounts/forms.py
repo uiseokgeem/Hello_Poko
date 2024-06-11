@@ -12,7 +12,7 @@ from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from account.models import CustomUser
+from accounts.models import CustomUser
 
 token_generator = default_token_generator
 
@@ -36,7 +36,9 @@ class PasswordResetForm(forms.Form):
 
             # 새로운 암호를 입력받아, 암호를 변경하는 뷰
             # path는 uidb64와 token으로 구성된 ApiResetPwdConfirm url 접근 경로
-            path = resolve_url("account:ApiResetPwdConfirm", uidb64=uidb64, token=token)
+            path = resolve_url(
+                "accounts:ApiResetPwdConfirm", uidb64=uidb64, token=token
+            )
 
             # 실사용 pwd reset url
             reset_url = f"{scheme}://{host}{path}"

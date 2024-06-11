@@ -1,6 +1,6 @@
 # api-test.http
 
-@BASE_URL = http://localhost:8000
+@BASE_URL = http://localhost:8080
 
 GET https://naver.com
 
@@ -66,11 +66,23 @@ Content-Type: application/x-www-form-urlencoded
 
 title=샘플+제목+수정2
 
-### 이메일 전송을 테스트하는 POST 요청 (성공)
+### 이메일 전송을 테스트하는 POST 요청
 
 POST {{BASE_URL}}/api/send_email/
 Content-Type: application/json
 
 {
   "email": "es468@naver.com"
+}
+
+###  회원가입을 테스트하는 POST 요청
+
+POST {{BASE_URL}}/api/register/
+Content-Type: application/json
+
+{
+    "username": "박홍수",
+    "email": "arounderseoul@gamil.com",
+    "password1": "rla468462!",
+    "password2": "rla468462!"
 }

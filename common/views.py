@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from checking.models import Member
 from django.contrib.auth.models import User
-from account.models import CustomUser
+from accounts.models import CustomUser
 
 # Graph
 from graph.views import ApiGraph6week as graph_6week
@@ -84,7 +84,7 @@ def ApiIndexUser(request):
 
 
 def ApiNewRegister(request):
-    if request.method == "GET" :
+    if request.method == "GET":
         teacher_name = request.user.username
         teachers = CustomUser.objects.all().exclude(username=teacher_name)
 
@@ -153,13 +153,13 @@ def ApiError(request):
 #             print("폼이 유효하지 않습니다.")
 #             print(form.errors)
 #             return render(
-#                 request, "common/../templates/account/signup.html", {"form": form}
+#                 request, "common/../templates/accounts/signup.html", {"form": form}
 #             )
 #     else:
 #         print("회원가입 실패")
 #         form = UserForm()
 #         return render(
-#             request, "common/../templates/account/signup.html", {"form": form}
+#             request, "common/../templates/accounts/signup.html", {"form": form}
 #         )
 
 # ApiSignup 이슈
@@ -176,7 +176,7 @@ def ApiError(request):
 
 # class CustomLoginView(auth_views.LoginView):
 #     authentication_form = CustomAuthenticationForm
-#     template_name = "common/../templates/account/login.html"
+#     template_name = "common/../templates/accounts/login.html"
 #
 #     def form_valid(self, form):
 #         user = form.get_user()
@@ -201,7 +201,7 @@ def ApiError(request):
 #     if request.method == "GET":
 #         form = CustomSetPasswordForm()
 #         return render(
-#             request, "common/../templates/account/update_pwd.html", {"form": form}
+#             request, "common/../templates/accounts/update_pwd.html", {"form": form}
 #         )
 #
 #     if request.method == "POST":

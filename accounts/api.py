@@ -1,4 +1,4 @@
-# 이메일 인증 api
+# 이메일 인증 API
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -11,6 +11,10 @@ import random
 import string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+
+# 회원가입 API
+from dj_rest_auth.registration.views import RegisterView
+from .serializers import CustomRegisterSerializer
 
 
 class SendEmailAPIView(APIView):
@@ -50,6 +54,10 @@ class SendEmailAPIView(APIView):
             data={"message": "이메일 주소가 올바르지 않습니다. 다시 시도해주세요."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class CustomResisterAPIView(RegisterView):
+    serializer_class = CustomRegisterSerializer
 
 
 class ConfirmEmailAPIView(APIView):

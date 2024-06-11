@@ -13,7 +13,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponse, request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from account.forms import UserForm
+from accounts.forms import UserForm
 from .models import CustomUser
 
 
@@ -76,7 +76,7 @@ def ApiUpdatePwd(request):
 
 
 class ApiResetPwd(PasswordResetView):
-    email_template_name = "account/password_reset_email.html"
+    email_template_name = "accounts/password_reset_email.html"
     success_url = reverse_lazy("account:ApiResetPwd")
 
     def form_valid(self, form):
@@ -158,7 +158,7 @@ class ApiResetPwdConfirm(PasswordResetConfirmView):
 #                         return redirect(settings.LOGIN_REDIRECT_URL)
 #                     else:
 #                         messages.success(request, "암호를 재설정했습니다. 다시 로그인해주세요.")
-#                         return redirect("account:login")
+#                         return redirect("accounts:login")
 #
 #             context_data["form"] = form
 #
@@ -192,4 +192,4 @@ class ApiResetPwdConfirm(PasswordResetConfirmView):
 #                     "만약 이메일을 받지 못했다면 등록하신 이메일을 다시 확인하시거나 스팸함을 확인해주세요."
 #                 ),
 #             )
-#         return redirect("account:ApiResetPwd")
+#         return redirect("accounts:ApiResetPwd")

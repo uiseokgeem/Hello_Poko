@@ -66,11 +66,18 @@ INSTALLED_APPS = [
     "checking",
     "report",
     "graph",
-    "account",
+    "accounts",
     "blog",  # dfr test
+    "rest_framework.authtoken",
+    "dj_rest_auth",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth.registration",
     # "django.contrib.sites",
     # "allauth",
-    # "allauth.account",
+    # "allauth.accounts",
     # "allauth.socialaccount",
     # "allauth.socialaccount.providers.google",
 ]
@@ -84,6 +91,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     # "common.middleware.LoginRequiredMiddleware",
 ]
 
@@ -173,7 +181,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INTERNAL_IPS = ["127.0.0.1"]
 
-AUTH_USER_MODEL = "account.CustomUser"
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 # CustomUser 모델에서 사용자 이름 대신 이메일을 사용
 USERNAME_FIELD = "email"
@@ -181,7 +189,7 @@ REQUIRED_FIELDS = ["email"]  # 회원가입 필드에 이메일을 추가
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    # "allauth.account.auth_backends.AuthenticationBackend",
+    # "allauth.accounts.auth_backends.AuthenticationBackend",
 )
 
 # 인증 allauth 사용 시 옵션
@@ -233,3 +241,17 @@ else:
 #         "rest_framework.permissions.AllowAny"
 #     ]
 # }
+
+# rest-auth
+# note : 사용자 필드가 email로 변경 된 설정
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = "my-app-auth"
+JWT_AUTH_REFRESH_COOKIE = "my-refresh-token"
+
+SITE_ID = 1
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_VERIFICATION = "none"

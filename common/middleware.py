@@ -28,21 +28,21 @@ class LoginRequiredMiddleware:
 #             return redirect(reverse("common:login"))
 
 
-# if not request.path.startswith(reverse("account:login")):
+# if not request.path.startswith(reverse("accounts:login")):
 #             if (
-#                 request.path == reverse("account:ApiSignup")
+#                 request.path == reverse("accounts:ApiSignup")
 #                 and request.method == "GET"
 #             ):
 #                 print("비인증 초기비밀번호 계정")
 #                 pass
 #             elif (
-#                 request.path == reverse("account:ApiSignup")
+#                 request.path == reverse("accounts:ApiSignup")
 #                 and request.method == "POST"
 #             ):
 #                 pass
 #             else:
 #                 print("비인증 login url이 아닌 경우")
-#                 return redirect(reverse("account:login"))
+#                 return redirect(reverse("accounts:login"))
 #
 #     response = self.get_response(request)
 #     return response

@@ -3,7 +3,7 @@ from . import api
 from django.urls import path, include
 from .views import CustomLoginView
 
-app_name = "account"
+app_name = "accounts"
 
 # View
 urlpatterns = [
@@ -32,8 +32,10 @@ account_api_v1 = [
         api.ConfirmEmailAPIView.as_view(),
         name="confirm_email",
     ),
+    path("register/", api.CustomResisterAPIView.as_view(), name="register"),
+    # path("register/", include("dj_rest_auth.registration.urls"), name="register"),
 ]
 
 urlpatterns += [
-    path("api/", include((account_api_v1, "account-v1"))),
+    path("api/", include((account_api_v1, "accounts-v1"))),
 ]

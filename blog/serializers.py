@@ -1,7 +1,7 @@
 from django.db.models import QuerySet
 from rest_framework import serializers
 
-from account.models import CustomUser
+from accounts.models import CustomUser
 from .models import Post, Comment
 
 
