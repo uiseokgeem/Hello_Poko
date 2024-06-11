@@ -175,6 +175,10 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 AUTH_USER_MODEL = "account.CustomUser"
 
+# CustomUser 모델에서 사용자 이름 대신 이메일을 사용
+USERNAME_FIELD = "email"
+REQUIRED_FIELDS = ["email"]  # 회원가입 필드에 이메일을 추가
+
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     # "allauth.account.auth_backends.AuthenticationBackend",

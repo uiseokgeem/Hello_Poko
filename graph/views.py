@@ -366,114 +366,121 @@ def ApiGraphWeekly(request, date):
 
 
 def ApiGraphIndividual(request):
-    if request.user.is_authenticated:
-        teacher_name = request.user
+    try:
+        if request.user.is_authenticated:
+            teacher_name = request.user
 
-    inv_rate = Member.objects.filter(teacher=teacher_name).values()
-    inv_rate_df = pd.DataFrame(data=inv_rate)
+        inv_rate = Member.objects.filter(teacher=teacher_name).values()
+        inv_rate_df = pd.DataFrame(data=inv_rate)
 
-    # 데이터 프레임 연산을 통해 전체 출결일수합기준 출석률과 결석률 계산
-    df_sum = (
-        inv_rate_df.groupby("name")[["attendance_count", "absent_count"]]
-        .sum()
-        .reset_index()
-    )  # attendance 횟수와 absent 횟수 각각 총합 계산
-    df_sum["total"] = df_sum["attendance_count"] + df_sum["absent_count"]
+        # 데이터 프레임 연산을 통해 전체 출결일수합기준 출석률과 결석률 계산
+        df_sum = (
+            inv_rate_df.groupby("name")[["attendance_count", "absent_count"]]
+            .sum()
+            .reset_index()
+        )  # attendance 횟수와 absent 횟수 각각 총합 계산
+        df_sum["total"] = df_sum["attendance_count"] + df_sum["absent_count"]
 
-    # 전체 출결일수에서 attendance 횟수와 absent 횟수의 비율을 계산 및 attendance_ratio, absent_ratio 컬럼 추가
-    df_sum["attendance_ratio"] = df_sum["attendance_count"] / df_sum["total"]
-    df_sum["absent_ratio"] = df_sum["absent_count"] / df_sum["total"]
+        # 전체 출결일수에서 attendance 횟수와 absent 횟수의 비율을 계산 및 attendance_ratio, absent_ratio 컬럼 추가
+        df_sum["attendance_ratio"] = df_sum["attendance_count"] / df_sum["total"]
+        df_sum["absent_ratio"] = df_sum["absent_count"] / df_sum["total"]
 
-    df_grouped = (
-        df_sum.groupby("name")[["attendance_ratio", "absent_ratio"]].sum().reset_index()
-    )
-
-    ## 폰트 설정, 적용되는지 확인 필요
-    path = "./static/AppleGothic.ttf"
-    fontprop = fm.FontProperties(fname=path, size=11)
-    plt.rcParams["font.family"] = "AppleGothic"
-    plt.rcParams["axes.unicode_minus"] = False
-
-    # 그래프 그리기
-    ax = df_grouped.plot(
-        x="name",
-        kind="bar",
-        color=["lightblue", "lightcoral"],
-        figsize=(8, 4),
-        stacked=True,
-    )
-
-    # 바깥 테두리 제거
-    for spine in plt.gca().spines.values():
-        spine.set_visible(False)
-
-    # 그래프에 텍스트 표기 하기
-    for p in ax.patches:
-        height = p.get_height()
-        width = p.get_width()
-        x, y = p.get_xy()
-        ax.text(x + width / 2, y + height, f"{height:.1f}", ha="center", va="bottom")
-
-    # 그래프 제목 및 축 레이블 설정
-    plt.xticks(
-        rotation="horizontal",
-        fontproperties=fontprop,
-    )
-    plt.xlabel("")
-    plt.ylabel("")
-    plt.yticks([])  # y축 눈금 비활성화
-    # plt.title("전체 기간 개인 출석/결석 비율")
-    plt.legend(["출석", "결석"], loc="upper right", prop=fontprop)
-
-    # 그래프를 SVG 문자열로 저장
-    imgdata = StringIO()
-    plt.savefig(imgdata, format="svg")
-    imgdata.seek(0)
-
-    # SVG 문자열을 가져와서 전달
-    graph_ind = imgdata.getvalue()
-
-    #######################################################
-
-    # 전체기간 개인 날짜별 출결 현황 table tab 표기
-    table_data = (
-        Attendance.objects.select_related("name__teacher")
-        .values(
-            "name__teacher__username",
-            "name__name",
-            "attendance",
-            "date",
+        df_grouped = (
+            df_sum.groupby("name")[["attendance_ratio", "absent_ratio"]]
+            .sum()
+            .reset_index()
         )
-        .filter(name__teacher__username=teacher_name)
-        .order_by("-date")
-    )
 
-    inv_date_df = pd.DataFrame(data=table_data.values())
-    print(inv_date_df)
+        ## 폰트 설정, 적용되는지 확인 필요
+        path = "./static/AppleGothic.ttf"
+        fontprop = fm.FontProperties(fname=path, size=11)
+        plt.rcParams["font.family"] = "AppleGothic"
+        plt.rcParams["axes.unicode_minus"] = False
 
-    table_student = Member.objects.filter(teacher=teacher_name)
-    result = inv_date_df.groupby(["name_id", "date"])["attendance"].max().unstack()
-    result.columns = pd.to_datetime(result.columns).strftime("%m-%d")
+        # 그래프 그리기
+        ax = df_grouped.plot(
+            x="name",
+            kind="bar",
+            color=["lightblue", "lightcoral"],
+            figsize=(8, 4),
+            stacked=True,
+        )
 
-    index_values = result.index
-    columns_names = result.columns
+        # 바깥 테두리 제거
+        for spine in plt.gca().spines.values():
+            spine.set_visible(False)
 
-    print(result)
-    print("Index values:", index_values)
-    print("Column names:", columns_names)
+        # 그래프에 텍스트 표기 하기
+        for p in ax.patches:
+            height = p.get_height()
+            width = p.get_width()
+            x, y = p.get_xy()
+            ax.text(
+                x + width / 2, y + height, f"{height:.1f}", ha="center", va="bottom"
+            )
 
-    # 개인별 출결일 결과 텍스트 생성
-    # inv_date = Attendance.objects.filter(teacher_name=query)
-    # inv_date_df = pd.DataFrame(data=inv_date.values())
+        # 그래프 제목 및 축 레이블 설정
+        plt.xticks(
+            rotation="horizontal",
+            fontproperties=fontprop,
+        )
+        plt.xlabel("")
+        plt.ylabel("")
+        plt.yticks([])  # y축 눈금 비활성화
+        # plt.title("전체 기간 개인 출석/결석 비율")
+        plt.legend(["출석", "결석"], loc="upper right", prop=fontprop)
 
-    # result["date"] = pd.to_datetime(result["date"])
-    # result["date"] = result["date"].dt.strftime("%m-%d")
-    #
-    # # request.session["result_df"] = result.to_json()  # 엑셀 다운로드에 필요한 result
-    # # print(inv_date_df)
-    # print(result)
+        # 그래프를 SVG 문자열로 저장
+        imgdata = StringIO()
+        plt.savefig(imgdata, format="svg")
+        imgdata.seek(0)
 
-    return graph_ind, result
+        # SVG 문자열을 가져와서 전달
+        graph_ind = imgdata.getvalue()
+
+        #######################################################
+
+        # 전체기간 개인 날짜별 출결 현황 table tab 표기
+        table_data = (
+            Attendance.objects.select_related("name__teacher")
+            .values(
+                "name__teacher__username",
+                "name__name",
+                "attendance",
+                "date",
+            )
+            .filter(name__teacher__username=teacher_name)
+            .order_by("-date")
+        )
+
+        inv_date_df = pd.DataFrame(data=table_data.values())
+        print(inv_date_df)
+
+        table_student = Member.objects.filter(teacher=teacher_name)
+        result = inv_date_df.groupby(["name_id", "date"])["attendance"].max().unstack()
+        result.columns = pd.to_datetime(result.columns).strftime("%m-%d")
+
+        index_values = result.index
+        columns_names = result.columns
+
+        print(result)
+        print("Index values:", index_values)
+        print("Column names:", columns_names)
+
+        # 개인별 출결일 결과 텍스트 생성
+        # inv_date = Attendance.objects.filter(teacher_name=query)
+        # inv_date_df = pd.DataFrame(data=inv_date.values())
+
+        # result["date"] = pd.to_datetime(result["date"])
+        # result["date"] = result["date"].dt.strftime("%m-%d")
+        #
+        # # request.session["result_df"] = result.to_json()  # 엑셀 다운로드에 필요한 result
+        # # print(inv_date_df)
+        # print(result)
+
+        return graph_ind, result
+    except:
+        return HttpResponse("데이터가 없습니다.")
 
 
 def ApiResultExcel(request):

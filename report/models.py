@@ -34,7 +34,7 @@ class UserCheck(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         related_name="usercheck",
-        to_field="username",
+        to_field="email",
     )
 
     title = models.CharField(max_length=30, null=True, default=None)
@@ -68,7 +68,6 @@ class Comment(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         related_name="comment",
-        to_field="username",
     )
     member_check = models.ForeignKey(
         MemberCheck, on_delete=models.CASCADE, related_name="comment"

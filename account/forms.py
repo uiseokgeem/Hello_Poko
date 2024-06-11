@@ -62,7 +62,7 @@ class PasswordResetForm(forms.Form):
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
-        max_length=12,
+        max_length=20,
         required=True,
         widget=forms.TextInput(
             attrs={"class": "form-control", "placeholder": "코드를 입력해주세요"}
@@ -133,7 +133,7 @@ class CustomSetPasswordForm(forms.Form):
 
 class UserForm(UserCreationForm):
     username = forms.CharField(
-        max_length=12,
+        max_length=30,
         required=True,
         widget=forms.TextInput(
             attrs={"class": "form-control", "placeholder": "사용할 아이디를 입력해주세요."}
