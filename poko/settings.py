@@ -84,7 +84,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "common.middleware.LoginRequiredMiddleware",
+    # "common.middleware.LoginRequiredMiddleware",
 ]
 
 ROOT_URLCONF = "poko.urls"
@@ -185,7 +185,7 @@ AUTHENTICATION_BACKENDS = (
 # ACCOUNT_EMAIL_REQUIRED = True
 # ACCOUNT_EMAIL_VERIFICATION = "none"
 
-# 배포시 설정(csrf토큰 설정), 개발환경에서는 admin login issue로 사용하지 말 것
+# 배포시 설정(csrf 토큰 설정), 개발환경에서는 admin login issue로 사용하지 말 것
 CSRF_TRUSTED_ORIGINS = ["https://www.poko-dev.com", "https://poko-dev.com"]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True

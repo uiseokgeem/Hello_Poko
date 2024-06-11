@@ -1,10 +1,11 @@
 from . import views
 from . import api
-from django.urls import path
+from django.urls import path, include
 from .views import CustomLoginView
 
 app_name = "account"
 
+# View
 urlpatterns = [
     path("", CustomLoginView.as_view(template_name="account/login.html")),
     path(
@@ -23,11 +24,16 @@ urlpatterns = [
     ),
 ]
 
-# urlpattern_api_v1 = [
-#     path("", api.PostListAPIView.as_view(), name="post_list"),
-#     path("<int:pk>", api.PostRetrieveAPIView.as_view(), name="post_detail"),
-# ]
-#
-# urlpatterns += [
-#     path("api/", include((urlpattern_api_v1, "api-v1"))),
-# ]
+# DRF
+account_api_v1 = [
+    path("send_email/", api.SendEmailAPIView.as_view(), name="send_email"),
+    path(
+        "confirm_email/<str:url_code>/",
+        api.ConfirmEmailAPIView.as_view(),
+        name="confirm_email",
+    ),
+]
+
+urlpatterns += [
+    path("api/", include((account_api_v1, "account-v1"))),
+]

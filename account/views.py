@@ -10,7 +10,7 @@ from .forms import CustomAuthenticationForm, CustomSetPasswordForm
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from account.forms import UserForm

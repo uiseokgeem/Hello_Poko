@@ -1,18 +1,16 @@
-# drf api를 만들기 위한 py
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    RetrieveAPIView,
+    CreateAPIView,
+    UpdateAPIView,
+    DestroyAPIView,
+)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
-from rest_framework.utils.serializer_helpers import ReturnList, ReturnDict
-from rest_framework.views import APIView
+from rest_framework.utils.serializer_helpers import ReturnDict
 
 from blog.models import Post
-from blog.serializers import (
-    PostSerializer,
-    PostListSerializer,
-    PostDetailSerializer,
-)
+from blog.serializers import PostListSerializer, PostDetailSerializer, PostSerializer
 from rest_framework.response import Response
 from rest_framework.request import Request
 
@@ -66,3 +64,35 @@ class PostRetrieveAPIView(RetrieveAPIView):
 
 
 post_detail_view = PostRetrieveAPIView.as_view()
+
+
+class PostCreateAPIView(
+    CreateAPIView
+):  # 상속받은 CreateAPIView는 POST 메서드만이 구현되어 있으며 GET 요청에는 405 응답을 한다!
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def peform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+post_new = PostCreateAPIView.as_view()
+
+
+class PostUpdateAPIView(UpdateAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = PostSerializer.get_optimized_queryset()
+    # PostCreateAPIView와 달리 수정할 레코드 조회 과정이 필요하기 떄문에
+    # queryset 추가, PostSerializer에도 PostDetailSerializer의 get_optimized_queryset 메서드 추가.
+
+
+post_edit = PostCreateAPIView.as_view()
+
+
+class PostDestroyAPIView(DestroyAPIView):
+    queryset = Post.objects.all()
+    permission_classes = [IsAuthenticated]
+
+
+post_delete = PostDestroyAPIView.as_view()
