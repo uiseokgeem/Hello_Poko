@@ -4,6 +4,7 @@
 letsencrypt.sh
 backup
 backup.sh
+blog
 data
 .DS_Store
 .env.dev.db
